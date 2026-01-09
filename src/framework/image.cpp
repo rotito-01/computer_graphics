@@ -326,10 +326,10 @@ bool Image::SaveTGA(const char* filename)
 	return true;
 }
 
-void DrawRectangle(int x0, int y0, int w, int h, Color& c) {
+void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor) {
 	for (int i = 0; i < w; i++) {
 		for (int j = 0; j < h; j++) {
-			SetPixel(x0 + i, y0 + j, c);
+			SetPixel( x + i, y + j, borderColor);
 		}
 	}
 }

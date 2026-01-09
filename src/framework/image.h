@@ -78,7 +78,7 @@ public:
 	bool LoadTGA(const char* filename, bool flip_y = false);
 	bool SaveTGA(const char* filename);
 
-    void DrawRectangle(int x0, int y0, int w, int h, Color& c)
+	void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
     
 	// Used to easy code
 	#ifndef IGNORE_LAMBDAS
