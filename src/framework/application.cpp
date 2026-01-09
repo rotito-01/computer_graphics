@@ -33,7 +33,7 @@ void Application::Render(void)
 {
 	// ...
 	framebuffer.Fill(Color(0, 0, 0));
-	framebuffer.DrawRect(mouse_position.x, mouse_position.y, 100, 100, Color(128, 0, 128), 10, false, Color(255, 255, 255));
+	framebuffer.DrawRect(mouse_position.x, mouse_position.y, 100, 100, Color(128, 0, 128), 5, false, Color(255, 255, 255));
 	framebuffer.Render();
 }
 
