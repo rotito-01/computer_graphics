@@ -326,6 +326,14 @@ bool Image::SaveTGA(const char* filename)
 	return true;
 }
 
+void DrawRectangle(int x0, int y0, int w, int h, Color& c) {
+	for (int i = 0; i < w; i++) {
+		for (int j = 0; j < h; j++) {
+			SetPixel(x0 + i, y0 + j, c);
+		}
+	}
+}
+
 #ifndef IGNORE_LAMBDAS
 
 // You can apply and algorithm for two images and store the result in the first one
