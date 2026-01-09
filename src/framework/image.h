@@ -78,6 +78,14 @@ public:
 	bool LoadTGA(const char* filename, bool flip_y = false);
 	bool SaveTGA(const char* filename);
 
+    void DrawRectangle(int x0, int y0, int w, int h, Color& c) {
+        for(int i= 0; i < w; i++){
+            for(int j = 0; j < h; j++) {
+                SetPixel(x0 + i, y0 +j, c);
+            }
+        }
+    }
+    
 	// Used to easy code
 	#ifndef IGNORE_LAMBDAS
 
