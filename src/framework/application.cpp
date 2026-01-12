@@ -26,6 +26,7 @@ Application::~Application()
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
+    borderWidth_real = 10;
 }
 
 // Render one frame
@@ -48,8 +49,8 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
     // KEY CODES: https://wiki.libsdlon.org/SDL2/SDL_Keycode
     switch(event.keysym.sym) {
         case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-        case SDLK_1: borderWidth_real = borderWidth_real + 5; break;
-        case SDLK_2: borderWidth_real = borderWidth_real - 5; break;
+        case SDLK_PLUS: borderWidth_real = borderWidth_real + 5; break;
+        case SDLK_MINUS: borderWidth_real = borderWidth_real - 5; break;
     }
 }
 
