@@ -26,14 +26,16 @@ Application::~Application()
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
+    
     borderWidth_real = 10;
+    fill_shape = false;
 }
 
 // Render one frame
 void Application::Render(void)
 {
     framebuffer.Fill(Color(0, 0, 0));
-    framebuffer.DrawRect(mouse_position.x, mouse_position.y, 100, 100, Color(128, 0, 128), borderWidth_real, false, Color(255, 255, 255));
+    framebuffer.DrawRect(mouse_position.x, mouse_position.y, 100, 100, Color(128, 0, 128), borderWidth_real, fill_shape, Color(255, 255, 255));
     framebuffer.Render();
 }
 
@@ -51,6 +53,16 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
         case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
         case SDLK_PLUS: borderWidth_real = borderWidth_real + 5; break;
         case SDLK_MINUS: borderWidth_real = borderWidth_real - 5; break;
+        case SDLK_f:
+            if (fill_shape == false){
+                fill_shape = true;
+            }
+            else {
+                fill_shape = false;
+            }
+            break;
+        
+        
     }
 }
 

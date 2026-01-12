@@ -354,6 +354,8 @@ void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int b
     }
 }
 
+
+
 #ifndef IGNORE_LAMBDAS
 
 // You can apply and algorithm for two images and store the result in the first one

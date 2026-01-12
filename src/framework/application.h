@@ -13,9 +13,10 @@ class Application
 public:
 
 	// Window
-    int borderWidth_real; // Default border width
-
-	SDL_Window* window = nullptr;
+    int borderWidth_real; // border width
+    bool fill_shape;
+    
+    SDL_Window* window = nullptr;
 	int window_width;
 	int window_height;
 
