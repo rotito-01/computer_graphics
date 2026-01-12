@@ -29,14 +29,32 @@ void Application::Init(void)
     
     borderWidth_real = 10;
     fill_shape = false;
+    application_task = 0;
 }
 
 // Render one frame
 void Application::Render(void)
 {
-    framebuffer.Fill(Color(0, 0, 0));
-    framebuffer.DrawRect(mouse_position.x, mouse_position.y, 100, 100, Color(128, 0, 128), borderWidth_real, fill_shape, Color(255, 255, 255));
+    /*
+    switch(application_task){
+        case 1:
+            framebuffer.Fill(Color(0, 0, 0));
+            framebuffer.DrawRect(mouse_position.x, mouse_position.y, 100, 100, Color(128, 0, 128), borderWidth_real, fill_shape, Color(255, 255, 255));
+            framebuffer.Render();
+            break;
+        case 2:
+            framebuffer.Fill(Color::BLACK);
+            framebuffer.DrawLineDDA(500, 500, 500 + 100 * cos(time), 500 + 100 * sin(time), Color::RED);
+            framebuffer.Render();
+
+
+
+    }
+     */
+    framebuffer.Fill(Color::BLACK);
+    framebuffer.DrawLineDDA(this->window_width/2, this->window_height/2, this->window_width/2 + 100 * cos(time), this->window_height/2 + 100 * sin(time), Color::RED);
     framebuffer.Render();
+
 }
 
 // Called after render
@@ -61,6 +79,15 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
                 fill_shape = false;
             }
             break;
+            
+        case SDLK_r: // Rectangle
+            application_task = 1;
+            break;
+            
+        case SDLK_l: // Line
+            application_task = 2;
+            break;
+            
         
         
     }
