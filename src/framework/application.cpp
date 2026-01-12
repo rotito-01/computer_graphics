@@ -31,10 +31,9 @@ void Application::Init(void)
 // Render one frame
 void Application::Render(void)
 {
-	// ...
-	framebuffer.Fill(Color(0, 0, 0));
-	framebuffer.DrawRect(mouse_position.x, mouse_position.y, 100, 100, Color(128, 0, 128), 5, false, Color(255, 255, 255));
-	framebuffer.Render();
+    framebuffer.Fill(Color(0, 0, 0));
+    framebuffer.DrawRect(mouse_position.x, mouse_position.y, 100, 100, Color(128, 0, 128), borderWidth_real, false, Color(255, 255, 255));
+    framebuffer.Render();
 }
 
 // Called after render
@@ -46,10 +45,12 @@ void Application::Update(float seconds_elapsed)
 //keyboard press event 
 void Application::OnKeyPressed( SDL_KeyboardEvent event )
 {
-	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
-	switch(event.keysym.sym) {
-		case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-	}
+    // KEY CODES: https://wiki.libsdlon.org/SDL2/SDL_Keycode
+    switch(event.keysym.sym) {
+        case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
+        case SDLK_1: borderWidth_real = borderWidth_real + 5; break;
+        case SDLK_2: borderWidth_real = borderWidth_real - 5; break;
+    }
 }
 
 void Application::OnMouseButtonDown( SDL_MouseButtonEvent event )

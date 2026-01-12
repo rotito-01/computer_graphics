@@ -327,11 +327,31 @@ bool Image::SaveTGA(const char* filename)
 }
 
 void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor) {
-	for (int i = 0; i < w; i++) {
-		for (int j = 0; j < h; j++) {
-			SetPixel( x + i, y + j, borderColor);
-		}
-	}
+    
+    if (isFilled == true) {
+        // Fill
+        for (int i = 0 + borderWidth; i < w - borderWidth; i++) {
+            for (int j = 0 + borderWidth; j < h - borderWidth; j++) {
+                
+                SetPixel( x + i, y + j, fillColor);
+            }
+        }
+    }
+    
+    
+    //Border
+    for (int i = 0; i < w; i++) {
+        for (int j = 0; j < borderWidth; j++){
+            SetPixel(x+i, y+j, borderColor);
+            SetPixel(x+i, y+j+h-borderWidth, borderColor);
+        }
+    }
+    for (int i = 0; i < h; i++) {
+        for (int j = 0; j < borderWidth; j++){
+            SetPixel(x+j, y+i, borderColor);
+            SetPixel(x+j+w-borderWidth, y+i, borderColor);
+        }
+    }
 }
 
 #ifndef IGNORE_LAMBDAS
