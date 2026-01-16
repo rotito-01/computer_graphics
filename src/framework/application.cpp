@@ -17,6 +17,10 @@ Application::Application(const char* caption, int width, int height)
 	this->keystate = SDL_GetKeyboardState(nullptr);
 
 	this->framebuffer.Resize(w, h);
+    this->application_task = 0;
+    Image::BGColor = Color::BLACK;
+    this->borderWidth_real = 10;
+    this->fill_shape = false;
 }
 
 Application::~Application()
@@ -27,9 +31,12 @@ void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
     
-    borderWidth_real = 10;
-    fill_shape = false;
-    application_task = 0;
+    
+    for (int i = 0; i < Image::table.size(); i++) {
+        Image::table[i].minx = window_width;
+        Image::table[i].maxx = 0;
+    }
+    
 }
 
 // Render one frame
@@ -44,15 +51,22 @@ void Application::Render(void)
             break;
         case 2:
             framebuffer.Fill(Color::BLACK);
-            framebuffer.DrawLineDDA(500, 500, 500 + 100 * cos(time), 500 + 100 * sin(time), Color::RED);
+            framebuffer.DrawLineDDA(this->window_width/2, this->window_height/2, this->window_width/2 + 100 * cos(time), this->window_height/2 + 100 * sin(time), Color::RED);
             framebuffer.Render();
 
 
 
     }
      */
-    framebuffer.Fill(Color::BLACK);
-    framebuffer.DrawLineDDA(this->window_width/2, this->window_height/2, this->window_width/2 + 100 * cos(time), this->window_height/2 + 100 * sin(time), Color::RED);
+
+    Vector2 v0 = Vector2(200, 200);
+    Vector2 v1 = Vector2(400, 300);
+    Vector2 v2 = Vector2(300, 500);
+
+    
+
+    framebuffer.Fill(Image::BGColor);
+    framebuffer.DrawTriangle(v0, v1, v2, Color::GREEN, true, Color::CYAN);
     framebuffer.Render();
 
 }

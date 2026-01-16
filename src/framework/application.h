@@ -16,6 +16,8 @@ public:
     int borderWidth_real; // border width
     bool fill_shape;
     int application_task;
+
+	
     
     SDL_Window* window = nullptr;
 	int window_width;
