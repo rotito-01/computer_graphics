@@ -31,7 +31,7 @@ void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
     
-    
+    LoadUI();
     for (int i = 0; i < Image::table.size(); i++) {
         Image::table[i].minx = window_width;
         Image::table[i].maxx = 0;
@@ -42,6 +42,10 @@ void Application::Init(void)
 // Render one frame
 void Application::Render(void)
 {
+    if (uiReload) {
+        LoadUI();
+        uiReload = false;
+    }
     /*
     switch(application_task){
         case 1:
@@ -66,7 +70,7 @@ void Application::Render(void)
     
 
     framebuffer.Fill(Image::BGColor);
-    framebuffer.DrawTriangle(v0, v1, v2, Color::GREEN, true, Color::CYAN);
+    //framebuffer.DrawTriangle(v0, v1, v2, Color::GREEN, true, Color::CYAN);
     framebuffer.Render();
 
 }
@@ -136,4 +140,45 @@ void Application::OnWheel(SDL_MouseWheelEvent event)
 void Application::OnFileChanged(const char* filename)
 { 
 	Shader::ReloadSingleShader(filename);
+}
+
+void Application::LoadUI() {
+    for (int i = 0; i < 40;i++){
+        for (int j = 0; j < window_width; j++) {
+            framebuffer.SetPixel(i, j, Color::GRAY);
+        }
+    }
+    Button clear = Button(30, 30, "clear.png", 5, 5, 0);
+    Button load = Button(30, 30, "load.png", 55, 5, 1);
+    Button save = Button(30, 30, "save.png", 105, 5, 2);
+    Button erase = Button(30, 30, "eraser.png", 155, 5, 3);
+    Button pencil = Button(30, 30, "pencil.png", 205, 5, 4);
+    Button line = Button(30, 30, "line.png", 255, 5, 5);
+    Button rect = Button(30, 30, "rectangle.png", 305, 5, 6);
+    Button trian = Button(30, 30, "triangle.png", 355, 5, 7);
+    Button black = Button(30, 30, "black.png", 405, 5, 8);
+    Button white = Button(30, 30, "white.png", 455, 5, 9);
+    Button pink = Button(30, 30, "pink.png", 505, 5, 10);
+    Button yellow = Button(30, 30, "yellow.png", 555, 5, 11);
+    Button red = Button(30, 30, "red.png", 605, 5, 12);
+    Button blue = Button(30, 30, "blue.png", 655, 5, 13);
+    Button cyan = Button(30, 30, "cyan.png", 705, 5, 14);
+    Button green = Button(30, 30, "green.png", 755, 5, 15);
+
+    framebuffer.DrawImage(clear.image, clear.x, clear.y);
+    framebuffer.DrawImage(load.image, load.x, load.y);
+    framebuffer.DrawImage(save.image, save.x, save.y);
+    framebuffer.DrawImage(erase.image, erase.x, erase.y);
+    framebuffer.DrawImage(pencil.image, pencil.x, pencil.y);
+    framebuffer.DrawImage(line.image, line.x, line.y);
+    framebuffer.DrawImage(rect.image, rect.x, rect.y);
+    framebuffer.DrawImage(trian.image, trian.x, trian.y);
+    framebuffer.DrawImage(black.image, black.x, black.y);
+    framebuffer.DrawImage(white.image, white.x, white.y);
+    framebuffer.DrawImage(pink.image, pink.x, pink.y);
+    framebuffer.DrawImage(yellow.image, yellow.x, yellow.y);
+    framebuffer.DrawImage(red.image, red.x, red.y);
+    framebuffer.DrawImage(blue.image, blue.x, blue.y);
+    framebuffer.DrawImage(cyan.image, cyan.x, cyan.y);
+    framebuffer.DrawImage(green.image, green.x, green.y);
 }

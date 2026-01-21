@@ -93,6 +93,7 @@ public:
     void DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c);
 	void DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor);
 	void ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table);
+	void DrawImage(const Image& image, int x, int y);
     
 	// Used to easy code
 	#ifndef IGNORE_LAMBDAS
@@ -139,4 +140,15 @@ public:
 	inline void SetPixelUnsafe(unsigned int x, unsigned int y, const float& v) { pixels[y * width + x] = v; }
 
 	void Resize(unsigned int width, unsigned int height);
+};
+
+class Button {
+public:
+	Image image;
+	int x;
+	int y;
+	int action;
+
+	Button(int w, int h, const char* filename, int x, int y, int act);
+	bool IsMouseInside(Vector2 mousePosition);
 };

@@ -25,6 +25,8 @@ public:
 
 	float time;
 
+	bool uiReload = false;
+
 	// Input
 	const Uint8* keystate;
 	int mouse_state; // Tells which buttons are pressed
@@ -63,4 +65,6 @@ public:
 		SDL_GetWindowSize(window,&w,&h);
 		return Vector2(float(w), float(h));
 	}
+
+	void LoadUI();
 };

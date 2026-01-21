@@ -374,8 +374,8 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 	int maxY = (std::max)((std::max)(p0.y, p1.y), p2.y);
 	int minY = (std::min)((std::min)(p0.y, p1.y), p2.y);
 
-	int maxX = (std::max)(p0.x, p1.x, p2.x);
-	int minX = (std::min)(p0.x, p1.x, p2.x);
+	int maxX = (std::max)((std::max)(p0.x, p1.x), p2.x);
+	int minX = (std::min)((std::min)(p0.x, p1.x), p2.x);
 	
 	for (int i = minY; i < maxY; i++) {
 		ScanLineDDA(minX, i, maxX, i, table);
@@ -408,6 +408,28 @@ void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table
 			table[y].minx = aux_minX;
 			table[y].maxx = aux_maxX;
 		}
+	}
+}
+
+void Image::DrawImage(const Image& image, int x, int y) {
+	for (int i = 0; i < image.width; i++) {
+		for (int j = 0; j < image.height; j++) {
+			SetPixel(x+i, y+j, image.GetPixel(i,j));
+		}
+	}
+}
+
+Button::Button(int w, int h, const char* filename, int x, int y, int act) {
+	this->image = Image(w, h);
+	this->image.LoadPNG(filename);
+	this->x = x;
+	this->y = y;
+	this->action = act;
+}
+
+bool Button::IsMouseInside(Vector2 mousePosition) {
+	if (this->x < mousePosition.x && this->y < mousePosition.y && mousePosition.x < (this->x + this->image.width) && mousePosition.y < (this->y + this->image.height)) {
+		return true;
 	}
 }
 
