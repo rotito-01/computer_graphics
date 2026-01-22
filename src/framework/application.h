@@ -17,16 +17,39 @@ public:
     bool fill_shape;
     int application_task;
 
-	
+	//Buttons:
+    Button clear;
+    Button load;
+    Button save;
+    Button erase;
+    Button pencil;
+    Button line;
+    Button rect;
+    Button trian;
+    Button black;
+    Button white;
+    Button pink;
+    Button yellow;
+    Button red;
+    Button blue;
+    Button cyan;
+    Button green;
+    
+    Color pen_color;
+    
+    int shape_mode;
     
     SDL_Window* window = nullptr;
 	int window_width;
 	int window_height;
 
 	float time;
-
+    bool ismousepressed;
 	bool uiReload = false;
-
+    Vector2 mouse_start;
+    
+    
+    
 	// Input
 	const Uint8* keystate;
 	int mouse_state; // Tells which buttons are pressed

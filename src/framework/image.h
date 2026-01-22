@@ -38,7 +38,7 @@ public:
 
 	Color* pixels;
 	
-	static Color BGColor;
+	
 
 	// Scan DDA
 	struct Cell {
@@ -148,7 +148,13 @@ public:
 	int x;
 	int y;
 	int action;
+    int w;
+    int h;
 
+    Button() {w = 0; h = 0; };
 	Button(int w, int h, const char* filename, int x, int y, int act);
+    Button(int x, int y, int w, int h, const char* filename);
+    
+    void SetPosition(int px, int py) {x = px; y = py;}
 	bool IsMouseInside(Vector2 mousePosition);
 };

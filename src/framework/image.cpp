@@ -340,16 +340,36 @@ void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int b
     
     
     //Border
-    for (int i = 0; i < w; i++) {
-        for (int j = 0; j < borderWidth; j++){
-            SetPixel(x+i, y+j, borderColor);
-            SetPixel(x+i, y+j+h-borderWidth, borderColor);
+    if (w > 0) {
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < borderWidth; j++){
+                SetPixel(x+i, y+j, borderColor);
+                SetPixel(x+i, y+j+h-borderWidth, borderColor);
+            }
         }
     }
-    for (int i = 0; i < h; i++) {
-        for (int j = 0; j < borderWidth; j++){
-            SetPixel(x+j, y+i, borderColor);
-            SetPixel(x+j+w-borderWidth, y+i, borderColor);
+    else {
+        for (int i = 0; i >= w; i--) {
+            for (int j = 0; j < borderWidth; j++){
+                SetPixel(x+i, y-j, borderColor);
+                SetPixel(x+i, y-j+h+borderWidth, borderColor);
+            }
+        }
+    }
+    if (h > 0) {
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < borderWidth; j++){
+                SetPixel(x+j, y+i, borderColor);
+                SetPixel(x+j+w-borderWidth, y+i, borderColor);
+            }
+        }
+    }
+    else {
+        for (int i = 0; i >= h; i--) {
+            for (int j = 0; j < borderWidth; j++){
+                SetPixel(x+j, y+i, borderColor);
+                SetPixel(x-j+w+borderWidth, y+i, borderColor);
+            }
         }
     }
 }
@@ -368,49 +388,53 @@ void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c){
 }
 
 void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor) {
-	DrawLineDDA(int(p0.x), int(p0.y), int(p1.x), int(p1.y), borderColor);
-	DrawLineDDA(int(p1.x), int(p1.y), int(p2.x), int(p2.y), borderColor);
-	DrawLineDDA(int(p0.x), int(p0.y), int(p2.x), int(p2.y), borderColor);
-	int maxY = (std::max)((std::max)(p0.y, p1.y), p2.y);
-	int minY = (std::min)((std::min)(p0.y, p1.y), p2.y);
+    DrawLineDDA(int(p0.x), int(p0.y), int(p1.x), int(p1.y), borderColor);
+    DrawLineDDA(int(p1.x), int(p1.y), int(p2.x), int(p2.y), borderColor);
+    DrawLineDDA(int(p0.x), int(p0.y), int(p2.x), int(p2.y), borderColor);
+    
+    std::vector<Cell>table;
+    table.resize(this->height);
+    
+                 
+    // Fill triangle
+    
+    if (isFilled) {
+        ScanLineDDA(int(p0.x), int(p0.y), int(p1.x), int(p1.y), table);
+        ScanLineDDA(int(p1.x), int(p1.y), int(p2.x), int(p2.y), table);
+        ScanLineDDA(int(p0.x), int(p0.y), int(p2.x), int(p2.y), table);
+        
+        for (int i = 0; i < this->height; i++) {
+            for (int j = table[i].minx; j < table[i].maxx; j++) {
+                SetPixel(j, i, fillColor);
+            }
+        }
+    }
+    
 
-	int maxX = (std::max)((std::max)(p0.x, p1.x), p2.x);
-	int minX = (std::min)((std::min)(p0.x, p1.x), p2.x);
-	
-	for (int i = minY; i < maxY; i++) {
-		ScanLineDDA(minX, i, maxX, i, table);
-		for (int j = table[i].minx; j < table[i].maxx; j++) {
-			SetPixel(j, i, fillColor);
-		}
-	}
 }
 
 void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
-	int dx = x1 - x0;
-	int dy = y1 - y0;
-	int d = (std::max)(abs(dx), abs(dy));
-	int aux_minX;
-	int aux_maxX = -1;
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+    int d = (std::max)(abs(dx), abs(dy));
 
-	for (int i = 0; i <= d; i++) {
-		int x = x0 + i * dx / d;
-		int y = y0 + i * dy / d;
-		aux_minX = table[y].minx;
-		aux_maxX = table[y].maxx;
+    for (int i = 0; i <= d; i++) {
+        int x = x0 + i * dx / d;
+        int y = y0 + i * dy / d;
+        
 
-		if ((GetPixel(x, y).r != BGColor.r) && (GetPixel(x, y).g != BGColor.g) && (GetPixel(x, y).b != BGColor.b)) {
-			if (table[y].minx > x) {
-				aux_minX = x;
-			}
-			if (table[y].maxx < x) {
-				aux_maxX = x;
-			}
-			table[y].minx = aux_minX;
-			table[y].maxx = aux_maxX;
-		}
-	}
+        if (table[y].minx > x) {
+            table[y].minx = x;
+        }
+        if (table[y].maxx < x) {
+            table[y].maxx = x;
+        }
+        
+    }
+    
+
+
 }
-
 void Image::DrawImage(const Image& image, int x, int y) {
 	for (int i = 0; i < image.width; i++) {
 		for (int j = 0; j < image.height; j++) {
@@ -425,6 +449,8 @@ Button::Button(int w, int h, const char* filename, int x, int y, int act) {
 	this->x = x;
 	this->y = y;
 	this->action = act;
+    this->w = w;
+    this->h = h;
 }
 
 bool Button::IsMouseInside(Vector2 mousePosition) {
