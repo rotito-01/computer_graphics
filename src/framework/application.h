@@ -12,10 +12,20 @@ class Application
 {
 public:
 
-	// Window
     int borderWidth_real; // border width
-    bool fill_shape;
+    bool fill_shape; // it will change if we press 'F' and the next shape we paint will be draw as filled.
     int application_task;
+    
+    bool ismousepressed; // changes if we are pressing or not the mouse left button
+    Vector2 mouse_start;
+    int tri_clicks;
+    
+    // Vectors that will be used hold triangle positions
+    Vector2 v1;
+    Vector2 v2;
+    Vector2 v3;
+    
+    int count;
 
 	//Buttons:
     Button clear;
@@ -35,21 +45,23 @@ public:
     Button cyan;
     Button green;
     
+    // Color selected from the palette
     Color pen_color;
     
+    // Each mode (triangle, rectangle...) has a number associated
     int shape_mode;
+    
+    ParticleSystem partSys;
+    
+    // Window
     
     SDL_Window* window = nullptr;
 	int window_width;
 	int window_height;
 
 	float time;
-    bool ismousepressed;
-	bool uiReload = false;
-    Vector2 mouse_start;
-    
-    
-    
+    bool uiReload = false;
+
 	// Input
 	const Uint8* keystate;
 	int mouse_state; // Tells which buttons are pressed
