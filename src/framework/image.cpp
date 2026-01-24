@@ -332,6 +332,261 @@ bool Image::SaveTGA(const char* filename)
 	return true;
 }
 
+void Image::DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor) {
+    
+    // The following 2 ifs are for handeling when we recieve negative values of coordinates
+    // For example, when the starting point is on the left
+    
+    if (w < 0) {
+        x += w;
+        w = -w;
+    }
+    
+    if (h < 0) {
+        y += h;
+        h = -h;
+    }
+    
+    
+    if (isFilled == true) { // Check a given variable that will be 'true' if we want to fill our shape
+        // Fill
+        for (int i = 0 + borderWidth; i < w - borderWidth; i++) {
+            for (int j = 0 + borderWidth; j < h - borderWidth; j++) {
+                SetPixel( x + i, y + j, fillColor);
+            }
+        }
+    }
+    
+    // Drawing of the borders
+    
+    //Top
+    for (int i = 0; i < w; ++i){
+        for (int j = 0; j < borderWidth; ++j){
+            SetPixel(x + i, y + j, borderColor);
+        }
+    }
+    
+    // Bottom
+    for (int i = 0; i < w; ++i){
+        for (int j = 0; j < borderWidth; ++j){
+            SetPixel(x + i, y + h - borderWidth + j, borderColor);
+        }
+    }
+    
+    // Left
+    for (int i = borderWidth; i < h - borderWidth; ++i){ // we subtract the borderwidth to avoid redrawing the pixels
+        for (int j = 0; j < borderWidth; ++j){
+            SetPixel(x + j, y + i, borderColor);
+        }
+    }
+    // Right
+    for (int i = borderWidth; i < h - borderWidth; ++i){
+        for (int j = 0; j < borderWidth; ++j){
+            SetPixel(x + w - borderWidth + j, y + i, borderColor);
+        }
+    }
+}
+
+void Image::DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c){
+    
+    int dx = x1- x0;
+    int dy = y1 - y0;
+    int d = (std::max)(abs(dx), abs(dy));
+    for(int i = 0; i <= d; i++) {
+        int x = x0 + i * dx/d;
+        int y = y0 + i * dy/d;
+        SetPixel(x, y, c);
+    }
+}
+
+void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor) {
+    DrawLineDDA(int(p0.x), int(p0.y), int(p1.x), int(p1.y), borderColor);
+    DrawLineDDA(int(p1.x), int(p1.y), int(p2.x), int(p2.y), borderColor);
+    DrawLineDDA(int(p0.x), int(p0.y), int(p2.x), int(p2.y), borderColor);
+    
+    std::vector<Cell>table;
+    table.resize(this->height);
+    
+                 
+    // Fill triangle
+    
+    if (isFilled) {
+        // We will fill the table
+        ScanLineDDA(int(p0.x), int(p0.y), int(p1.x), int(p1.y), table);
+        ScanLineDDA(int(p1.x), int(p1.y), int(p2.x), int(p2.y), table);
+        ScanLineDDA(int(p0.x), int(p0.y), int(p2.x), int(p2.y), table);
+        
+        // and now go through the table so we paint 
+        for (int i = 0; i < this->height; i++) {
+            for (int j = table[i].minx; j < table[i].maxx; j++) {
+                SetPixel(j, i, fillColor);
+            }
+        }
+    }
+
+}
+
+void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+    int d = (std::max)(abs(dx), abs(dy));
+
+    for (int i = 0; i <= d; i++) {
+        int x = x0 + i * dx / d;
+        int y = y0 + i * dy / d;
+        
+
+        if (table[y].minx > x) {
+            table[y].minx = x;
+        }
+        if (table[y].maxx < x) {
+            table[y].maxx = x;
+        }
+        
+    }
+
+}
+void Image::DrawImage(const Image& image, int x, int y) {
+	for (int i = 0; i < image.width; i++) {
+		for (int j = 0; j < image.height; j++) {
+			SetPixel(x+i, y+j, image.GetPixel(i,j));
+		}
+	}
+}
+
+Button::Button(int w, int h, const char* filename, int x, int y, int act) {
+	this->image = Image(w, h);
+	this->image.LoadPNG(filename);
+	this->x = x;
+	this->y = y;
+	this->action = act;
+    this->w = w;
+    this->h = h;
+}
+
+bool Button::IsMouseInside(Vector2 mousePosition) {
+	if (this->x < mousePosition.x && this->y < mousePosition.y && mousePosition.x < (this->x + this->image.width) && mousePosition.y < (this->y + this->image.height)) {
+		return true;
+	}
+}
+
+void ParticleSystem::Init(int w, int h) {
+    
+    //the center of our frame change according to the frame size
+    float centerX = w * 0.5f;
+    float centerY = h * 0.5f;
+
+    for (int i = 0; i < MAX_PARTICLES; i++) {
+        // to have some particles (stars) at the start of the animation
+        particles[i].position.x = (float)(rand() % w);
+        particles[i].position.y = (float)(rand() % h);
+
+        // we use vectors that go from the center of the frame to the position of the particle
+        float dx = particles[i].position.x - centerX;
+        float dy = particles[i].position.y - centerY;
+        float distance = sqrtf(dx * dx + dy * dy); //with that we can compute the full vector
+
+        if (distance > 0.1f) {
+            particles[i].velocity.x = dx / distance;
+            particles[i].velocity.y = dy / distance;
+        }
+        else {
+            particles[i].velocity.x = 1.0f;
+            particles[i].velocity.y = 0.0f;
+        }
+
+        particles[i].acceleration = 100.0f + (rand() % 200);
+        particles[i].ttl = (float)(rand() % 40) / 10.0f; // Random start TTL so they don't sync
+        particles[i].inactive = false;
+    }
+}
+
+void ParticleSystem::Update(float dt, int w, int h) {
+    float centerX = w * 0.5f;
+    float centerY = h * 0.5f;
+    float maxLife = 4.0f;
+    float fadeTime = 0.8f;
+
+    for (int i = 0; i < MAX_PARTICLES; i++) {
+        if (particles[i].inactive) {
+            
+            particles[i].position.x = centerX + (rand() % 10 - 5);
+            particles[i].position.y = centerY + (rand() % 10 - 5);
+
+            // recompute the velocity according to the center
+            float dx = particles[i].position.x - centerX;
+            float dy = particles[i].position.y - centerY;
+            float distance = sqrtf(dx * dx + dy * dy);
+
+            if (distance > 0.1f) {
+                particles[i].velocity.x = dx / distance;
+                particles[i].velocity.y = dy / distance;
+            } else {
+                particles[i].velocity.x = (rand() % 2 == 0) ? 1.0f : -1.0f;
+                particles[i].velocity.y = (rand() % 2 == 0) ? 1.0f : -1.0f;
+            }
+
+            particles[i].acceleration = 100.0f;
+            particles[i].ttl = maxLife;
+            particles[i].inactive = false;
+            continue;
+        }
+
+        // the very same classic principle of physics:
+        // P_t+1 = P + V * accel * dt
+        particles[i].position.x += particles[i].velocity.x * particles[i].acceleration * dt;
+        particles[i].position.y += particles[i].velocity.y * particles[i].acceleration * dt;
+        
+        // since we are traveling across start, it has to accelerate as we pass them
+        particles[i].acceleration += 500.0f * dt;
+        particles[i].ttl -= dt;
+
+        
+        float age = maxLife - particles[i].ttl; // this is the "age" of a particle
+        float multiplier = 1.0f;
+
+        // to create the fade in, we check if the age is still under the fading period (hardcoded above)
+        if (age < fadeTime) {
+            multiplier = age / fadeTime;
+        }
+        // fade out check
+        else if (particles[i].ttl < fadeTime) {
+            multiplier = particles[i].ttl / fadeTime;
+        }
+
+        if (multiplier < 0.0f) {
+            multiplier = 0.0f;
+        }
+        if (multiplier > 1.0f){
+            multiplier = 1.0f;
+        }
+
+        particles[i].color.r = (unsigned char)(255 * multiplier);
+        particles[i].color.g = (unsigned char)(255 * multiplier);
+        particles[i].color.b = (unsigned char)(255 * multiplier);
+
+        // check if out particle has "died"
+        // or if it's out of margins
+        if (particles[i].ttl <= 0 || particles[i].position.x < -20 || particles[i].position.x > w + 20 || particles[i].position.y < -20 || particles[i].position.y > h + 20) {
+            particles[i].inactive = true;
+        }
+    }
+}
+
+void ParticleSystem::Render(Image* framebuffer) {
+    for (int i = 0; i < MAX_PARTICLES; i++) {
+        if (particles[i].inactive) continue;
+
+        // to create the effect of having a trail we take the previous x,y position
+        // an idea very similar to the one used in painting lines in the paint program
+        float trailScale = 0.02f; // we multiply it by a custom factor
+        float prevX = particles[i].position.x - (particles[i].velocity.x * particles[i].acceleration * trailScale);
+        float prevY = particles[i].position.y - (particles[i].velocity.y * particles[i].acceleration * trailScale);
+        framebuffer->DrawLineDDA(prevX, prevY, particles[i].position.x, particles[i].position.y, particles[i].color);
+        
+    }
+}
+
 #ifndef IGNORE_LAMBDAS
 
 // You can apply and algorithm for two images and store the result in the first one

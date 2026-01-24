@@ -20,6 +20,9 @@ class FloatImage;
 class Entity;
 class Camera;
 
+
+
+
 // A matrix of pixels
 class Image
 {
@@ -37,6 +40,17 @@ public:
 	unsigned int bytes_per_pixel = 3; // Bits per pixel
 
 	Color* pixels;
+	
+	
+
+	// Scan DDA
+	struct Cell {
+		int minx = INT_MAX;
+		int maxx = INT_MIN;
+	};
+
+	static std::vector<Cell> table;
+
 
 	// Constructors
 	Image();
@@ -78,6 +92,12 @@ public:
 	bool LoadTGA(const char* filename, bool flip_y = false);
 	bool SaveTGA(const char* filename);
 
+	void DrawRect(int x, int y, int w, int h, const Color& borderColor, int borderWidth, bool isFilled, const Color& fillColor);
+    void DrawLineDDA(int x0, int y0, int x1, int y1, const Color& c);
+	void DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor);
+	void ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table);
+	void DrawImage(const Image& image, int x, int y);
+    
 	// Used to easy code
 	#ifndef IGNORE_LAMBDAS
 
@@ -92,6 +112,28 @@ public:
 		return *this;
 	}
 	#endif
+};
+
+// Particle system given class
+class ParticleSystem {
+
+        static const int MAX_PARTICLES = 500;
+
+        struct Particle {
+                Vector2 position;
+                Vector2 velocity; // Normalized speed and direction of the particle
+                Color color;
+                float acceleration;
+                float ttl; // Time left until the particle expires
+                bool inactive; // Particle is not used/expired, so it can be recreated
+        };
+
+        Particle particles[MAX_PARTICLES];
+
+public:
+        void Init(int w, int h);
+        void Render(Image* framebuffer);
+        void Update(float dt, int w, int h);
 };
 
 // Image storing one float per pixel instead of a 3 or 4 component Color
@@ -123,4 +165,21 @@ public:
 	inline void SetPixelUnsafe(unsigned int x, unsigned int y, const float& v) { pixels[y * width + x] = v; }
 
 	void Resize(unsigned int width, unsigned int height);
+};
+
+class Button {
+public:
+	Image image;
+	int x;
+	int y;
+	int action;
+    int w;
+    int h;
+
+    Button() {w = 0; h = 0; };
+	Button(int w, int h, const char* filename, int x, int y, int act);
+    Button(int x, int y, int w, int h, const char* filename);
+    
+    void SetPosition(int px, int py) {x = px; y = py;}
+	bool IsMouseInside(Vector2 mousePosition);
 };
