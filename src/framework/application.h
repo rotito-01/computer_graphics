@@ -8,6 +8,7 @@
 #include "framework.h"
 #include "image.h"
 
+
 class Application
 {
 public:
