@@ -7,6 +7,8 @@
 #include "main/includes.h"
 #include "framework.h"
 #include "image.h"
+#include "mesh.h"
+#include "entity.h"
 
 
 class Application
@@ -21,13 +23,15 @@ public:
     Vector2 mouse_start;
     int tri_clicks;
     
+    Camera camara;
+    
     // Vectors that will be used hold triangle positions
     Vector2 v1;
     Vector2 v2;
     Vector2 v3;
     
     int count;
-
+    
 	//Buttons:
     Button clear;
     Button load;
@@ -53,6 +57,10 @@ public:
     int shape_mode;
     
     ParticleSystem partSys;
+    
+    Mesh *mesh;
+    Matrix44 matrix;
+    Entity* entity = nullptr;
     
     // Window
     

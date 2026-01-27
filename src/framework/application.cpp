@@ -32,14 +32,16 @@ void Application::Init(void)
     Mesh* mesh = new Mesh();
     mesh->LoadOBJ("../res/meshes/lee.obj");
     Matrix44 matrix = Matrix44();
-    Entity entity = Entity(mesh, matrix);
+    Entity temp = Entity(mesh, matrix);
+    this->entity = &temp;
+    this->camara = Camera();
 }
 
 // Render one frame
 void Application::Render(void)
 {
     
-
+    this->entity->Render(&framebuffer, &camara, Color::WHITE);
 }
 
 // Called after render
