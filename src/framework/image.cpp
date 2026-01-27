@@ -454,6 +454,7 @@ void Image::DrawImage(const Image& image, int x, int y) {
 	}
 }
 
+/*
 Button::Button(int w, int h, const char* filename, int x, int y, int act) {
 	this->image = Image(w, h);
 	this->image.LoadPNG(filename);
@@ -586,7 +587,7 @@ void ParticleSystem::Render(Image* framebuffer) {
         
     }
 }
-
+*/
 #ifndef IGNORE_LAMBDAS
 
 // You can apply and algorithm for two images and store the result in the first one

@@ -113,7 +113,7 @@ public:
 	}
 	#endif
 };
-
+/*
 // Particle system given class
 class ParticleSystem {
 
@@ -135,6 +135,7 @@ public:
         void Render(Image* framebuffer);
         void Update(float dt, int w, int h);
 };
+*/
 
 // Image storing one float per pixel instead of a 3 or 4 component Color
 
@@ -167,6 +168,7 @@ public:
 	void Resize(unsigned int width, unsigned int height);
 };
 
+/*
 class Button {
 public:
 	Image image;
@@ -183,3 +185,4 @@ public:
     void SetPosition(int px, int py) {x = px; y = py;}
 	bool IsMouseInside(Vector2 mousePosition);
 };
+*/

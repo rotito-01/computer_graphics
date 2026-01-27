@@ -89,7 +89,7 @@ void Application::OnFileChanged(const char* filename)
 { 
 	Shader::ReloadSingleShader(filename);
 }
-
+/*
 void Application::LoadUI() {
     
     framebuffer.Fill(Color::BLACK);
@@ -135,5 +135,5 @@ void Application::LoadUI() {
     framebuffer.DrawImage(green.image, green.x, green.y);
     
 }
-
+*/
 

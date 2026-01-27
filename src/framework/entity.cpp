@@ -11,13 +11,13 @@ Entity::Entity(Mesh* m, Matrix44 mm) {
 
 
 void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
-	std::vector<Vector3> vert = mesh->GetVertices();
+	
 	Vector4 cur_vec;
 	Vector4 proj_v;
-	for (int i = 0; i < vert.size(); i++) {
-		cur_vec.x = vert[i].x;
-		cur_vec.y = vert[i].y;
-		cur_vec.z = vert[i].z;
+	for (int i = 0; i < mesh->GetVertices().size(); i++) {
+		cur_vec.x = mesh->GetVertices()[i].x;
+		cur_vec.y = mesh->GetVertices()[i].y;
+		cur_vec.z = mesh->GetVertices()[i].z;
 		cur_vec.w = 1;
 		proj_v = model_matrix * cur_vec; // world coordinates
         
@@ -40,6 +40,6 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         proj_v.y = proj_v.y * framebuffer->height;
         
 		//framebuffer Set Pixel
-        framebuffer->SetPixel(proj_v.x, proj_v.y, c);
+        framebuffer->SetPixel(int(proj_v.x), int(proj_v.y), c);
 	}
 }

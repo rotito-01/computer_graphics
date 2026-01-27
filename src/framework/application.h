@@ -14,7 +14,7 @@
 class Application
 {
 public:
-
+    /*
     int borderWidth_real; // border width
     bool fill_shape; // it will change if we press 'F' and the next shape we paint will be draw as filled.
     int application_task;
@@ -23,7 +23,7 @@ public:
     Vector2 mouse_start;
     int tri_clicks;
     
-    Camera camara;
+    
     
     // Vectors that will be used hold triangle positions
     Vector2 v1;
@@ -57,9 +57,9 @@ public:
     int shape_mode;
     
     ParticleSystem partSys;
-    
-    Mesh *mesh;
-    Matrix44 matrix;
+    */
+
+    Camera camara;
     Entity* entity = nullptr;
     
     // Window
@@ -110,5 +110,5 @@ public:
 		return Vector2(float(w), float(h));
 	}
 
-	void LoadUI();
+	//void LoadUI();
 };
