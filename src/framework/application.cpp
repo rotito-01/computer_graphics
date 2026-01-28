@@ -33,7 +33,7 @@ void Application::Init(void)
     mesh->LoadOBJ("../res/meshes/lee.obj");
     Matrix44 matrix = Matrix44();
     Entity temp = Entity(mesh, matrix);
-    this->entity = &temp;
+    this->entity = temp;
     this->camara = Camera();
 }
 
@@ -41,7 +41,7 @@ void Application::Init(void)
 void Application::Render(void)
 {
     
-    this->entity->Render(&framebuffer, &camara, Color::WHITE);
+    this->entity.Render(&framebuffer, &camara, Color::WHITE);
 }
 
 // Called after render

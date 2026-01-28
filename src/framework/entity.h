@@ -9,6 +9,7 @@ public:
 	Mesh* mesh;
 	Matrix44 model_matrix;
 
+	Entity();
 	Entity(Mesh* m, Matrix44 mm);
 
 

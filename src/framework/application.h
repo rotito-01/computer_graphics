@@ -60,7 +60,7 @@ public:
     */
 
     Camera camara;
-    Entity* entity = nullptr;
+    Entity entity;
     
     // Window
     
