@@ -19,11 +19,11 @@ Entity::Entity(Mesh* m, Matrix44 mm) {
 
 void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
 	
-	Vector4 cur_vec1;
+	Vector3 cur_vec1;
     //Vector4 cur_vec2;
     //Vector4 cur_vec3;
 
-	Vector4 proj_v1;
+	Vector3 proj_v1;
     //Vector4 proj_v2;
     //Vector4 proj_v3;
 
@@ -35,7 +35,6 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
 		cur_vec1.x = mesh->GetVertices()[i].x;
 		cur_vec1.y = mesh->GetVertices()[i].y;
 		cur_vec1.z = mesh->GetVertices()[i].z;
-		cur_vec1.w = 1;
 		proj_v1 = model_matrix * cur_vec1; // world coordinates
         /*
         cur_vec2.x = mesh->GetVertices()[i + 1].x;
@@ -50,16 +49,17 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         cur_vec3.w = 1;
         proj_v3 = model_matrix * cur_vec3;
         */
-        proj_v1 = camera->GetViewProjectionMatrix() * proj_v1; // View Matrix and Projection Matrix all in one
+        
+        proj_v1 = camera->ProjectVector(proj_v1);
+        //proj_v1 = camera->GetViewProjectionMatrix() * proj_v1; // View Matrix and Projection Matrix all in one
         //proj_v2 = camera->GetViewProjectionMatrix() * proj_v2;
         //proj_v3 = camera->GetViewProjectionMatrix() * proj_v3;
         // Clamp already done ..?
         
 		// camera project pv
 		// clamp [-1, 1]
-        proj_v1.x = proj_v1.x / proj_v1.w;
-        proj_v1.y = proj_v1.y / proj_v1.w;
-        proj_v1.z = proj_v1.z / proj_v1.w;
+
+
         /*
         proj_v2.x = proj_v2.x / proj_v2.w;
         proj_v2.y = proj_v2.y / proj_v2.w;
