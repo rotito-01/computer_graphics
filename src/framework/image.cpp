@@ -430,12 +430,18 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
     float dx = x1 - x0;
     float dy = y1 - y0;
+
     float d = (std::max)(abs(dx), abs(dy));
 
     for (int i = 0; i <= d; i++) {
-        int x = x0 + i * dx / d;
+		int x = x0 + i * dx / d;
         int y = y0 + i * dy / d;
-        
+		if (dx == 0 || d == 0) {
+			x = x0;
+		}
+		if (dy == 0 || d == 0) {
+			y = y0;
+		}
 
         if (table[y].minx > x) {
             table[y].minx = x;
