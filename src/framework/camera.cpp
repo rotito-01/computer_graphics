@@ -85,9 +85,9 @@ void Camera::UpdateViewMatrix()
 	// Reset Matrix (Identity)
 	view_matrix.SetIdentity();
 
-	Vector3 forward = this->center - this->eye;
+	Vector3 forward = (this->eye - this->center).Normalize();
 	Vector3 right = this->up.Cross(forward);
-	Vector3 up1 = right.Cross(forward);
+	Vector3 top = forward.Cross(right);
 
 	// Comment this line to create your own projection matrix!
 	//SetExampleViewMatrix();
@@ -101,9 +101,9 @@ void Camera::UpdateViewMatrix()
 	rotation.M[0][0] = right.x;
 	rotation.M[0][1] = right.y;
 	rotation.M[0][2] = right.z;
-	rotation.M[1][0] = up1.x;
-	rotation.M[1][1] = up1.y;
-	rotation.M[1][2] = up1.z;
+	rotation.M[1][0] = top.x;
+	rotation.M[1][1] = top.y;
+	rotation.M[1][2] = top.z;
 	rotation.M[2][0] = forward.x;
 	rotation.M[2][1] = forward.y;
 	rotation.M[2][2] = forward.z;
@@ -131,7 +131,7 @@ void Camera::UpdateProjectionMatrix()
 	// Remember how to fill a Matrix4x4 (check framework slides)
 	
 	if (type == PERSPECTIVE) {
-		float f = (1 / tanf(this->fov / 2));
+		float f = (1 / tanf((this->fov * PI / 180) / 2));
 		projection_matrix.M[0][0] = f / this->aspect;
 		projection_matrix.M[0][1] = 0;
 		projection_matrix.M[0][2] = 0;

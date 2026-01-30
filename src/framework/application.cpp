@@ -35,10 +35,10 @@ void Application::Init(void)
     Entity temp = Entity(mesh, matrix);
     this->entity = temp;
     this->cam = Camera();
-    this->cam.SetPerspective(PI / 3, this->window_width / this->window_height, 0, 10000);
-    Vector3 eye = Vector3(1,5,2);
-    Vector3 center = Vector3(4,2,10);
-    Vector3 up = Vector3(0,30,0);
+    this->cam.SetPerspective(60, float(this->window_width) / this->window_height, 0.1, 100);
+    Vector3 eye = Vector3(0,0,1);
+    Vector3 center = Vector3(0,0,0);
+    Vector3 up = Vector3(0,1,0);
     this->cam.LookAt(eye, center, up);
 }
 
