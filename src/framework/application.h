@@ -59,7 +59,7 @@ public:
     ParticleSystem partSys;
     */
 
-    Camera camara;
+    Camera cam;
     Entity entity;
     
     // Window

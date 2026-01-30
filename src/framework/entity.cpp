@@ -95,6 +95,6 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         
 		//framebuffer Set Pixel
         //framebuffer->SetPixel(v1.x, v1.y, c);
-        framebuffer->DrawTriangle(v1, v2, v3, c, true, c);
+        framebuffer->DrawTriangle(v1, v2, v3, c, false, c);
 	}
 }

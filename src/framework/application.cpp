@@ -34,14 +34,20 @@ void Application::Init(void)
     Matrix44 matrix = Matrix44();
     Entity temp = Entity(mesh, matrix);
     this->entity = temp;
-    this->camara = Camera();
+    this->cam = Camera();
+    this->cam.SetPerspective(PI / 3, this->window_width / this->window_height, 0, 10000);
+    Vector3 eye = Vector3(1,5,2);
+    Vector3 center = Vector3(4,2,10);
+    Vector3 up = Vector3(0,30,0);
+    this->cam.LookAt(eye, center, up);
 }
 
 // Render one frame
 void Application::Render(void)
 {
     
-    this->entity.Render(&framebuffer, &camara, Color::WHITE);
+    this->entity.Render(&framebuffer, &cam, Color::WHITE);
+    framebuffer.Render();
 }
 
 // Called after render
