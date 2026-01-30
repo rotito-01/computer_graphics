@@ -7,18 +7,69 @@
 #include "main/includes.h"
 #include "framework.h"
 #include "image.h"
+#include "mesh.h"
+#include "entity.h"
+
 
 class Application
 {
 public:
+    /*
+    int borderWidth_real; // border width
+    bool fill_shape; // it will change if we press 'F' and the next shape we paint will be draw as filled.
+    int application_task;
+    
+    bool ismousepressed; // changes if we are pressing or not the mouse left button
+    Vector2 mouse_start;
+    int tri_clicks;
+    
+    
+    
+    // Vectors that will be used hold triangle positions
+    Vector2 v1;
+    Vector2 v2;
+    Vector2 v3;
+    
+    int count;
+    
+	//Buttons:
+    Button clear;
+    Button load;
+    Button save;
+    Button erase;
+    Button pencil;
+    Button line;
+    Button rect;
+    Button trian;
+    Button black;
+    Button white;
+    Button pink;
+    Button yellow;
+    Button red;
+    Button blue;
+    Button cyan;
+    Button green;
+    
+    // Color selected from the palette
+    Color pen_color;
+    
+    // Each mode (triangle, rectangle...) has a number associated
+    int shape_mode;
+    
+    ParticleSystem partSys;
+    */
 
-	// Window
-
-	SDL_Window* window = nullptr;
+    Camera camara;
+    Entity entity;
+    
+    // Window
+    
+    SDL_Window* window = nullptr;
 	int window_width;
 	int window_height;
 
 	float time;
+    bool uiReload = false;
 
 	// Input
 	const Uint8* keystate;
@@ -58,4 +109,6 @@ public:
 		SDL_GetWindowSize(window,&w,&h);
 		return Vector2(float(w), float(h));
 	}
+
+	//void LoadUI();
 };
