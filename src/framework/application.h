@@ -59,6 +59,11 @@ public:
     ParticleSystem partSys;
     */
 
+    int mode;
+    float near_p;
+    float far_p;
+    float fov_aux;
+
     Camera cam;
     Entity Jose;
     Entity Xesca;
@@ -103,6 +108,7 @@ public:
 		this->window_width = width;
 		this->window_height = height;
 		this->framebuffer.Resize(width, height);
+        this->cam.SetPerspective(60, float(this->window_width) / this->window_height, 0.1, 100);
 	}
 
 	Vector2 GetWindowSize()

@@ -18,7 +18,7 @@ Application::Application(const char* caption, int width, int height)
 	this->keystate = SDL_GetKeyboardState(nullptr);
 
 	this->framebuffer.Resize(w, h);
-    
+    this->mode = 0;
 }
 
 Application::~Application()
@@ -49,7 +49,10 @@ void Application::Init(void)
     this->Sandalio = temp3;
 
     this->cam = Camera();
-    this->cam.SetPerspective(60, float(this->window_width) / this->window_height, 0.1, 100);
+    this->fov_aux = 60;
+    this->near_p = 0.1;
+    this->far_p = 10;
+    this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
     Vector3 eye = Vector3(0,0,1);
     Vector3 center = Vector3(0,0,0);
     Vector3 up = Vector3(0,1,0);
@@ -70,6 +73,8 @@ void Application::Render(void)
 void Application::Update(float seconds_elapsed)
 {
     this->Jose.Update(seconds_elapsed, 1);
+    this->Sandalio.Update(seconds_elapsed, 2);
+    this->Xesca.Update(seconds_elapsed, 3);
 }
 
 //keyboard press event 
@@ -78,7 +83,43 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
     // KEY CODES: https://wiki.libsdlon.org/SDL2/SDL_Keycode
     switch(event.keysym.sym) {
         case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-        
+        case SDLK_n:
+            mode = 1;
+            break;
+        case SDLK_f:
+            mode = 2;
+            break;
+        case SDLK_v:
+            mode = 3;
+            break;
+        case SDLK_1:
+            if (mode == 1) {
+                this->near_p = this->near_p + 0.5;
+                this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
+            }
+            else if (mode == 2) {
+                this->far_p = this->far_p + 0.5;
+                this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
+            }
+            else if (mode == 3) {
+                this->fov_aux = this->fov_aux + 5;
+                this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
+            }
+            break;
+        case SDLK_2:
+            if (mode == 1) {
+                this->near_p = this->near_p - 0.5;
+                this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
+            }
+            else if (mode == 2) {
+                this->far_p = this->far_p - 0.5;
+                this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
+            }
+            else if (mode == 3) {
+                this->fov_aux = this->fov_aux - 5;
+                this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
+            }
+            break;
     }
 }
 void Application::OnMouseButtonDown( SDL_MouseButtonEvent event )

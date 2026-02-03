@@ -1,6 +1,7 @@
 #include "entity.h"
 #include "mesh.h"
 #include "image.h"
+#include <math.h>
 
 // Default constructor so that we can have a variable Entity in application.h
 
@@ -100,11 +101,52 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
 }
 
 void Entity::Update(float seconds_elapsed, int mode) {
-    // Rotation
+
     if (mode == 1) {
+        // Rotation
         Matrix44 rot = Matrix44();
         rot.MakeRotationMatrix(seconds_elapsed * DEG2RAD * -100, Vector3(0, 1, 0));
         model_matrix = rot * model_matrix;
+    }
+    else if (mode == 2) {
+        // Translation
+        Matrix44 tran = Matrix44();
+        displacement++;
+        if (displacement <= 10) {
+            tran.MakeTranslationMatrix(0, 0, 0.1);
+        }
+        else {
+            tran.MakeTranslationMatrix(0, 0, -0.1);
+        }
+
+        if (displacement == 20) {
+            displacement = 0;
+        }
+        
+        model_matrix = tran * model_matrix;
+    }
+    else if (mode == 3) {
+        // Translation
+        Matrix44 scale = Matrix44();
+        Matrix44 center = Matrix44();
+        Matrix44 position = Matrix44();
+        growth++;
+
+        if (growth <= 7) {
+            scale.MakeScaleMatrix((float(8) / 7), (float(8) / 7), (float(8) / 7));
+        }
+        else {
+
+            scale.MakeScaleMatrix((float(7)/8), (float(7) / 8), (float(7) / 8));
+        }
+
+        if (growth == 14) {
+            growth = 0;
+        }
+        center.MakeTranslationMatrix(-0.4, 0.3, -0.3);
+        position.MakeTranslationMatrix(0.4, -0.3, 0.3);
+        Matrix44 M = position * scale * center;
+        model_matrix = M * model_matrix;
     }
     
 }
