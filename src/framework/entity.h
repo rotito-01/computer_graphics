@@ -14,5 +14,5 @@ public:
 
 
 	void Render(Image* framebuffer, Camera* camera, const Color& c);
-
+	void Update(float seconds_elapsed, int mode);
 };

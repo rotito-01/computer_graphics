@@ -60,7 +60,9 @@ public:
     */
 
     Camera cam;
-    Entity entity;
+    Entity Jose;
+    Entity Xesca;
+    Entity Sandalio;
     
     // Window
     

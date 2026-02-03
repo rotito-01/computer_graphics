@@ -29,11 +29,25 @@ Application::~Application()
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
-    Mesh* mesh = new Mesh();
-    mesh->LoadOBJ("../res/meshes/lee.obj");
+    Mesh* mesh1 = new Mesh();
+    mesh1->LoadOBJ("../res/meshes/lee.obj");
     Matrix44 matrix = Matrix44();
-    Entity temp = Entity(mesh, matrix);
-    this->entity = temp;
+    Entity temp1 = Entity(mesh1, matrix);
+    this->Jose = temp1;
+
+    Mesh* mesh2 = new Mesh();
+    mesh2->LoadOBJ("../res/meshes/anna.obj");
+    matrix.MakeTranslationMatrix(0.4, -0.3, 0.3);
+    Entity temp2 = Entity(mesh2, matrix);
+    this->Xesca = temp2;
+    
+    Mesh* mesh3 = new Mesh();
+    mesh3->LoadOBJ("../res/meshes/cleo.obj");
+    matrix.SetIdentity();
+    matrix.MakeTranslationMatrix(-0.4, -0.2, -0.4);
+    Entity temp3 = Entity(mesh3, matrix);
+    this->Sandalio = temp3;
+
     this->cam = Camera();
     this->cam.SetPerspective(60, float(this->window_width) / this->window_height, 0.1, 100);
     Vector3 eye = Vector3(0,0,1);
@@ -45,15 +59,17 @@ void Application::Init(void)
 // Render one frame
 void Application::Render(void)
 {
-    
-    this->entity.Render(&framebuffer, &cam, Color::WHITE);
+    framebuffer.Fill(Color::BLACK);
+    this->Jose.Render(&framebuffer, &cam, Color::WHITE);
+    this->Xesca.Render(&framebuffer, &cam, Color::CYAN);
+    this->Sandalio.Render(&framebuffer, &cam, Color::GREEN);
     framebuffer.Render();
 }
 
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-    
+    this->Jose.Update(seconds_elapsed, 1);
 }
 
 //keyboard press event 

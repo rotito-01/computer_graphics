@@ -98,3 +98,13 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         framebuffer->DrawTriangle(v1, v2, v3, c, false, c);
 	}
 }
+
+void Entity::Update(float seconds_elapsed, int mode) {
+    // Rotation
+    if (mode == 1) {
+        Matrix44 rot = Matrix44();
+        rot.MakeRotationMatrix(seconds_elapsed * DEG2RAD * -100, Vector3(0, 1, 0));
+        model_matrix = rot * model_matrix;
+    }
+    
+}

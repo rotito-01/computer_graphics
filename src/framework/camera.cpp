@@ -63,7 +63,7 @@ void Camera::SetPerspective(float fov, float aspect, float near_plane, float far
 {
 	type = PERSPECTIVE;
 
-	this->fov = fov;
+	this->fov = DEG2RAD * fov;
 	this->aspect = aspect;
 	this->near_plane = near_plane;
 	this->far_plane = far_plane;
@@ -86,7 +86,7 @@ void Camera::UpdateViewMatrix()
 	view_matrix.SetIdentity();
 
 	Vector3 forward = (this->eye - this->center).Normalize();
-	Vector3 right = this->up.Cross(forward);
+	Vector3 right = this->up.Cross(forward).Normalize();
 	Vector3 top = forward.Cross(right);
 
 	// Comment this line to create your own projection matrix!
@@ -98,21 +98,17 @@ void Camera::UpdateViewMatrix()
 	// Create the view matrix rotation
 	
 	Matrix44 rotation = Matrix44();
-	rotation.M[0][0] = right.x;
-	rotation.M[0][1] = right.y;
-	rotation.M[0][2] = right.z;
-	rotation.M[1][0] = top.x;
-	rotation.M[1][1] = top.y;
-	rotation.M[1][2] = top.z;
-	rotation.M[2][0] = forward.x;
-	rotation.M[2][1] = forward.y;
-	rotation.M[2][2] = forward.z;
+	rotation.Set(right.x, right.y, right.z, 0,
+		top.x, top.y, top.z, 0,
+		forward.x, forward.y, forward.z, 0,
+		0, 0, 0, 1);
 
 	// Translate view matrix
 	Matrix44 translate = Matrix44();
-	translate.M[0][3] = -this->eye.x;
-	translate.M[1][3] = -this->eye.y;
-	translate.M[2][3] = -this->eye.z;
+	translate.Set(1, 0, 0, -this->eye.x,
+		0, 1, 0, -this->eye.y,
+		0, 0, 1, -this->eye.z,
+		0, 0, 0, 1);
 
 	this->view_matrix = rotation * translate;
 
@@ -131,41 +127,17 @@ void Camera::UpdateProjectionMatrix()
 	// Remember how to fill a Matrix4x4 (check framework slides)
 	
 	if (type == PERSPECTIVE) {
-		float f = (1 / tanf((this->fov * PI / 180) / 2));
-		projection_matrix.M[0][0] = f / this->aspect;
-		projection_matrix.M[0][1] = 0;
-		projection_matrix.M[0][2] = 0;
-		projection_matrix.M[0][3] = 0;
-		projection_matrix.M[1][0] = 0;
-		projection_matrix.M[1][1] = f;
-		projection_matrix.M[1][2] = 0;
-		projection_matrix.M[1][3] = 0;
-		projection_matrix.M[2][0] = 0;
-		projection_matrix.M[2][1] = 0;
-		projection_matrix.M[2][2] = (this->far_plane + this->near_plane)/(this->near_plane - this->far_plane);
-		projection_matrix.M[2][3] = 2*(this->far_plane * this->near_plane) / (this->near_plane - this->far_plane);
-		projection_matrix.M[3][0] = 0;
-		projection_matrix.M[3][1] = 0;
-		projection_matrix.M[3][2] = -1;
-		projection_matrix.M[3][3] = 0;
+		float f = (1 / tanf(this->fov / 2));
+		projection_matrix.Set(f / this->aspect, 0, 0, 0,
+			0, f, 0, 0,
+			0, 0, (this->far_plane + this->near_plane) / (this->near_plane - this->far_plane), 2 * (this->far_plane * this->near_plane) / (this->near_plane - this->far_plane),
+			0, 0, -1, 0);
 	}
 	else if (type == ORTHOGRAPHIC) {
-		projection_matrix.M[0][0] = 2 / (this->right - this->left);
-		projection_matrix.M[0][1] = 0;
-		projection_matrix.M[0][2] = 0;
-		projection_matrix.M[0][3] = -(this->right + this->left)/(this->right - this->left);
-		projection_matrix.M[1][0] = 0;
-		projection_matrix.M[1][1] = 2 / (this->top - this->bottom);
-		projection_matrix.M[1][2] = 0;
-		projection_matrix.M[1][3] = -(this->top + this->bottom) / (this->top - this->bottom);;
-		projection_matrix.M[2][0] = 0;
-		projection_matrix.M[2][1] = 0;
-		projection_matrix.M[2][2] = -2 / (this->far_plane - this->near_plane);
-		projection_matrix.M[2][3] = -(this->far_plane + this->near_plane) / (this->far_plane - this->near_plane);;
-		projection_matrix.M[3][0] = 0;
-		projection_matrix.M[3][1] = 0;
-		projection_matrix.M[3][2] = 0;
-		projection_matrix.M[3][3] = -1;
+		projection_matrix.Set(2 / (this->right - this->left), 0, 0, -(this->right + this->left) / (this->right - this->left),
+			0, 2 / (this->top - this->bottom), 0, -(this->top + this->bottom) / (this->top - this->bottom),
+			0, 0, -2 / (this->far_plane - this->near_plane), -(this->far_plane + this->near_plane) / (this->far_plane - this->near_plane),
+			0, 0, 0, 1);
 	} 
 
 	UpdateViewProjectionMatrix();
