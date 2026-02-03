@@ -63,7 +63,7 @@ void Camera::SetPerspective(float fov, float aspect, float near_plane, float far
 {
 	type = PERSPECTIVE;
 
-	this->fov = fov;
+	this->fov = DEG2RAD * fov;
 	this->aspect = aspect;
 	this->near_plane = near_plane;
 	this->far_plane = far_plane;
@@ -85,18 +85,32 @@ void Camera::UpdateViewMatrix()
 	// Reset Matrix (Identity)
 	view_matrix.SetIdentity();
 
+	Vector3 forward = (this->eye - this->center).Normalize();
+	Vector3 right = this->up.Cross(forward).Normalize();
+	Vector3 top = forward.Cross(right);
+
 	// Comment this line to create your own projection matrix!
-	SetExampleViewMatrix();
+	//SetExampleViewMatrix();
 
 	// Remember how to fill a Matrix4x4 (check framework slides)
 	// Careful with the order of matrix multiplications, and be sure to use normalized vectors!
 	
 	// Create the view matrix rotation
-	// ...
-	// view_matrix.M[3][3] = 1.0;
+	
+	Matrix44 rotation = Matrix44();
+	rotation.Set(right.x, right.y, right.z, 0,
+		top.x, top.y, top.z, 0,
+		forward.x, forward.y, forward.z, 0,
+		0, 0, 0, 1);
 
 	// Translate view matrix
-	// ...
+	Matrix44 translate = Matrix44();
+	translate.Set(1, 0, 0, -this->eye.x,
+		0, 1, 0, -this->eye.y,
+		0, 0, 1, -this->eye.z,
+		0, 0, 0, 1);
+
+	this->view_matrix = rotation * translate;
 
 	UpdateViewProjectionMatrix();
 }
@@ -108,16 +122,22 @@ void Camera::UpdateProjectionMatrix()
 	projection_matrix.SetIdentity();
 
 	// Comment this line to create your own projection matrix!
-	SetExampleProjectionMatrix();
+	//SetExampleProjectionMatrix();
 
 	// Remember how to fill a Matrix4x4 (check framework slides)
 	
 	if (type == PERSPECTIVE) {
-		// projection_matrix.M[2][3] = -1;
-		// ...
+		float f = (1 / tanf(this->fov / 2));
+		projection_matrix.Set(f / this->aspect, 0, 0, 0,
+			0, f, 0, 0,
+			0, 0, (this->far_plane + this->near_plane) / (this->near_plane - this->far_plane), 2 * (this->far_plane * this->near_plane) / (this->near_plane - this->far_plane),
+			0, 0, -1, 0);
 	}
 	else if (type == ORTHOGRAPHIC) {
-		// ...
+		projection_matrix.Set(2 / (this->right - this->left), 0, 0, -(this->right + this->left) / (this->right - this->left),
+			0, 2 / (this->top - this->bottom), 0, -(this->top + this->bottom) / (this->top - this->bottom),
+			0, 0, -2 / (this->far_plane - this->near_plane), -(this->far_plane + this->near_plane) / (this->far_plane - this->near_plane),
+			0, 0, 0, 1);
 	} 
 
 	UpdateViewProjectionMatrix();
