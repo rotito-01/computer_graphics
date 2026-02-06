@@ -104,19 +104,24 @@ void Entity::Update(float seconds_elapsed, int mode) {
 
     if (mode == 1) {
         // Rotation
+        Matrix44 center = Matrix44();
+        Matrix44 position = Matrix44();
         Matrix44 rot = Matrix44();
         rot.MakeRotationMatrix(seconds_elapsed * DEG2RAD * -100, Vector3(0, 1, 0));
-        model_matrix = rot * model_matrix;
+        center.MakeTranslationMatrix(0, 0, 0.15);
+        position.MakeTranslationMatrix(0, 0, -0.15);
+        Matrix44 M = position * rot * center;
+        model_matrix = M * model_matrix;
     }
     else if (mode == 2) {
         // Translation
         Matrix44 tran = Matrix44();
         displacement++;
         if (displacement <= 10) {
-            tran.MakeTranslationMatrix(0, 0, 0.1);
+            tran.MakeTranslationMatrix(0, 0, seconds_elapsed*0.7);
         }
         else {
-            tran.MakeTranslationMatrix(0, 0, -0.1);
+            tran.MakeTranslationMatrix(0, 0, -seconds_elapsed * 0.7);
         }
 
         if (displacement == 20) {
@@ -130,14 +135,14 @@ void Entity::Update(float seconds_elapsed, int mode) {
         Matrix44 scale = Matrix44();
         Matrix44 center = Matrix44();
         Matrix44 position = Matrix44();
+        float factor = seconds_elapsed * 5;
         growth++;
 
         if (growth <= 7) {
-            scale.MakeScaleMatrix((float(8) / 7), (float(8) / 7), (float(8) / 7));
+            scale.MakeScaleMatrix(factor, factor, factor);
         }
         else {
-
-            scale.MakeScaleMatrix((float(7)/8), (float(7) / 8), (float(7) / 8));
+            scale.MakeScaleMatrix(float(1/ factor), float(1 / factor), float(1 / factor));
         }
 
         if (growth == 14) {

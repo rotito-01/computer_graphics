@@ -59,15 +59,24 @@ public:
     ParticleSystem partSys;
     */
 
+    int application_task;
+    bool ismousepressedL;
+    bool ismousepressedR;
+
     int mode;
     float near_p;
     float far_p;
     float fov_aux;
 
+    Vector3 eye;
+    Vector3 center;
+    Vector3 up;
+
     Camera cam;
     Entity Jose;
     Entity Xesca;
     Entity Sandalio;
+    Entity Pedro;
     
     // Window
     
