@@ -21,6 +21,8 @@ Application::Application(const char* caption, int width, int height)
     this->mode = 0;
 
     this->application_task = 2;
+    this->ismousepressedL = false;
+    this->ismousepressedR = false;
 }
 
 Application::~Application()
@@ -171,9 +173,17 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
 {
 
     if (ismousepressedR == true) {
+
+        
+        float angle = 0.4;
+
+        this->cam.Rotate(angle, this->cam.eye.x);
+        this->cam.Rotate(angle, this->cam.eye.y);
+        /*
         this->center.x = this->center.x + (-mouse_delta.x) * 0.005;
         this->center.y = this->center.y + (mouse_delta.y) * 0.005;
         this->cam.LookAt(eye, center, up);
+        */
     }
     if (ismousepressedL == true) {
         this->eye.x = this->eye.x + (-mouse_delta.x) * 0.005;
@@ -185,8 +195,8 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
 void Application::OnWheel(SDL_MouseWheelEvent event)
 {
 	float dy = event.preciseY;
-    Vector3 v = Vector3(0, 0, (-dy * 0.1))
-    this->cam.Move()
+    Vector3 v = Vector3(0, 0, (dy * 0.1));
+    this->cam.Move(v);
     
 	// ...
 }
