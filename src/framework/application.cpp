@@ -67,21 +67,23 @@ void Application::Init(void)
     this->center = Vector3(0,0,0);
     this->up = Vector3(0,1,0);
     this->cam.LookAt(eye, center, up);
+    this->Zbuffer = FloatImage(this->window_width, this->window_height);
 }
 
 // Render one frame
 void Application::Render(void)
 {
+    this->Zbuffer = FloatImage(this->window_width, this->window_height);
     if (application_task == 1) {
         framebuffer.Fill(Color::BLACK);
-        this->Pedro.Render(&framebuffer, &cam, Color::YELLOW);
+        this->Pedro.Render(&framebuffer, &cam, &Zbuffer);
         framebuffer.Render();
     }
     else if (application_task == 2) {
         framebuffer.Fill(Color::BLACK);
-        this->Jose.Render(&framebuffer, &cam, Color::YELLOW);
-        this->Xesca.Render(&framebuffer, &cam, Color::CYAN);
-        this->Sandalio.Render(&framebuffer, &cam, Color::PURPLE);
+        this->Jose.Render(&framebuffer, &cam, &Zbuffer);
+        this->Xesca.Render(&framebuffer, &cam, &Zbuffer);
+        this->Sandalio.Render(&framebuffer, &cam, &Zbuffer);
         framebuffer.Render();
     }
     

@@ -18,7 +18,7 @@ Entity::Entity(Mesh* m, Matrix44 mm) {
 }
 
 
-void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
+void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
 	
     auto vertices = this->mesh->GetVertices();
 
@@ -98,7 +98,7 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         
 		//framebuffer Set Pixel
         //framebuffer->SetPixel(v1.x, v1.y, c);
-        framebuffer->DrawTriangleInterpolated(v1, v2, v3, Color::BLUE, Color::GREEN, Color::RED);
+        framebuffer->DrawTriangleInterpolated(v1, v2, v3, Color::BLUE, Color::GREEN, Color::RED, zBuffer);
 	}
 }
 

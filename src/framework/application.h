@@ -62,6 +62,7 @@ public:
     int application_task;
     bool ismousepressedL;
     bool ismousepressedR;
+    FloatImage Zbuffer;
 
     int mode;
     float near_p;
@@ -117,6 +118,7 @@ public:
 		this->window_width = width;
 		this->window_height = height;
 		this->framebuffer.Resize(width, height);
+        this->Zbuffer.Resize(width, height);
         this->cam.SetPerspective(60, float(this->window_width) / this->window_height, 0.1, 100);
 	}
 

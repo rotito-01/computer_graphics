@@ -461,7 +461,7 @@ void Image::DrawImage(const Image& image, int x, int y) {
 	}
 }
 
-void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2) {
+void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer) {
 	Vector2 v0 = Vector2(p0.x, p0.y);
 	Vector2 v1 = Vector2(p1.x, p1.y);
 	Vector2 v2 = Vector2(p2.x, p2.y);
@@ -481,7 +481,7 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 	ScanLineDDA(int(p0.x), int(p0.y), int(p2.x), int(p2.y), table);
 
 	// and now go through the table so we paint 
-	for (int i = 0; i <= this->height; i++) {
+	for (int i = 0; i < this->height; i++) {
 		for (int j = table[i].minx; j <= table[i].maxx; j++) {
 			Vector2 p = Vector2(j, i);
 
@@ -509,11 +509,13 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 			}
 
 			Color finalColor = alpha * c0 + beta * c1 + gamma * c2;
+			float z = alpha * p0.z + beta * p1.z + gamma * p2.z;
 
-			if ((alpha + beta + gamma) <= 1) {
-				
+			if ((zbuffer->GetPixel(j, i) > z) || (zbuffer->GetPixel(j, i) == NULL)) {
+				zbuffer->SetPixel(j, i, z);
+				SetPixel(j, i, finalColor);
 			}
-			SetPixel(j, i, finalColor);
+			
 		}
 	}
 

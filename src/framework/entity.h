@@ -15,6 +15,6 @@ public:
 	Entity(Mesh* m, Matrix44 mm);
 
 
-	void Render(Image* framebuffer, Camera* camera, const Color& c);
+	void Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer);
 	void Update(float seconds_elapsed, int mode);
 };
