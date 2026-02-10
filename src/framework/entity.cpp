@@ -30,9 +30,9 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
     Vector3 proj_v2;
     Vector3 proj_v3;
 
-    Vector2 v1;
-    Vector2 v2;
-    Vector2 v3;
+    Vector3 v1;
+    Vector3 v2;
+    Vector3 v3;
 
 	for (int i = 0; i < vertices.size(); i = i+3) {
 		cur_vec1 = vertices[i];
@@ -85,18 +85,20 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
         
         v1.x = proj_v1.x * framebuffer->width;
         v1.y = proj_v1.y * framebuffer->height;
+        v1.z = proj_v1.z;
         
         v2.x = proj_v2.x * framebuffer->width;
         v2.y = proj_v2.y * framebuffer->height;
+        v2.z = proj_v2.z;
 
         v3.x = proj_v3.x * framebuffer->width;
         v3.y = proj_v3.y * framebuffer->height;
-        
+        v3.z = proj_v3.z;
 
         
 		//framebuffer Set Pixel
         //framebuffer->SetPixel(v1.x, v1.y, c);
-        framebuffer->DrawTriangle(v1, v2, v3, c, false, c);
+        framebuffer->DrawTriangleInterpolated(v1, v2, v3, Color::BLUE, Color::GREEN, Color::RED);
 	}
 }
 
@@ -117,14 +119,14 @@ void Entity::Update(float seconds_elapsed, int mode) {
         // Translation
         Matrix44 tran = Matrix44();
         displacement++;
-        if (displacement <= 10) {
-            tran.MakeTranslationMatrix(0, 0, seconds_elapsed*0.7);
+        if (displacement <= 80) {
+            tran.MakeTranslationMatrix(0, 0, seconds_elapsed* 0.7);
         }
         else {
             tran.MakeTranslationMatrix(0, 0, -seconds_elapsed * 0.7);
         }
 
-        if (displacement == 20) {
+        if (displacement == 160) {
             displacement = 0;
         }
         
@@ -135,17 +137,17 @@ void Entity::Update(float seconds_elapsed, int mode) {
         Matrix44 scale = Matrix44();
         Matrix44 center = Matrix44();
         Matrix44 position = Matrix44();
-        float factor = seconds_elapsed * 5;
+        float factor = seconds_elapsed * 50;
         growth++;
 
-        if (growth <= 7) {
+        if (growth <= 70) {
             scale.MakeScaleMatrix(factor, factor, factor);
         }
         else {
             scale.MakeScaleMatrix(float(1/ factor), float(1 / factor), float(1 / factor));
         }
 
-        if (growth == 14) {
+        if (growth == 140) {
             growth = 0;
         }
         center.MakeTranslationMatrix(-0.4, 0.3, -0.3);

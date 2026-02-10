@@ -74,14 +74,14 @@ void Application::Render(void)
 {
     if (application_task == 1) {
         framebuffer.Fill(Color::BLACK);
-        this->Pedro.Render(&framebuffer, &cam, Color::WHITE);
+        this->Pedro.Render(&framebuffer, &cam, Color::YELLOW);
         framebuffer.Render();
     }
     else if (application_task == 2) {
         framebuffer.Fill(Color::BLACK);
-        this->Jose.Render(&framebuffer, &cam, Color::WHITE);
+        this->Jose.Render(&framebuffer, &cam, Color::YELLOW);
         this->Xesca.Render(&framebuffer, &cam, Color::CYAN);
-        this->Sandalio.Render(&framebuffer, &cam, Color::GREEN);
+        this->Sandalio.Render(&framebuffer, &cam, Color::PURPLE);
         framebuffer.Render();
     }
     
@@ -171,24 +171,29 @@ void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 
 void Application::OnMouseMove(SDL_MouseButtonEvent event)
 {
+    Vector3 forward = (this->cam.eye - this->cam.center).Normalize();
+    Vector3 right = this->cam.up.Cross(forward).Normalize();
+    Vector3 top = forward.Cross(right);
 
     if (ismousepressedR == true) {
 
-        
-        float angle = 0.4;
+        float angleX = mouse_delta.x * 0.005;
+        this->cam.Rotate(angleX, top);
 
-        this->cam.Rotate(angle, this->cam.eye.x);
-        this->cam.Rotate(angle, this->cam.eye.y);
-        /*
-        this->center.x = this->center.x + (-mouse_delta.x) * 0.005;
-        this->center.y = this->center.y + (mouse_delta.y) * 0.005;
-        this->cam.LookAt(eye, center, up);
-        */
+        float angleY = mouse_delta.y * 0.005;
+        this->cam.Rotate(angleY, right);
+
     }
     if (ismousepressedL == true) {
-        this->eye.x = this->eye.x + (-mouse_delta.x) * 0.005;
-        this->eye.y = this->eye.y + (mouse_delta.y) * 0.005;
-        this->cam.LookAt(eye, center, up);
+
+        float angleX = mouse_delta.x * 0.005;
+        
+        float angleY = mouse_delta.y * 0.005;
+
+        this->cam.Orbit(angleX, top);
+
+        this->cam.Orbit(angleY, right);
+
     }
 }
 

@@ -461,6 +461,64 @@ void Image::DrawImage(const Image& image, int x, int y) {
 	}
 }
 
+void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2) {
+	Vector2 v0 = Vector2(p0.x, p0.y);
+	Vector2 v1 = Vector2(p1.x, p1.y);
+	Vector2 v2 = Vector2(p2.x, p2.y);
+	
+	Vector2 p01 = (v1 - v0);
+	Vector2 p02 = (v2 - v0);
+	Vector2 p12 = (v2 - v1);
+
+	float total = p01.Perpdot(p02);
+	float totArea = (total) / 2;
+
+	std::vector<Cell>table;
+	table.resize(this->height);
+
+	ScanLineDDA(int(p0.x), int(p0.y), int(p1.x), int(p1.y), table);
+	ScanLineDDA(int(p1.x), int(p1.y), int(p2.x), int(p2.y), table);
+	ScanLineDDA(int(p0.x), int(p0.y), int(p2.x), int(p2.y), table);
+
+	// and now go through the table so we paint 
+	for (int i = 0; i <= this->height; i++) {
+		for (int j = table[i].minx; j <= table[i].maxx; j++) {
+			Vector2 p = Vector2(j, i);
+
+			float mod0 = p12.Perpdot(p - v1);
+			float a0 = (mod0) / 2;
+
+			float mod1 = p02.Perpdot(p - v0);
+			float a1 = (mod1) / 2;
+
+			float mod2 = p01.Perpdot(p - v0);
+			float a2 = (mod2) / 2;
+
+			float alpha = a0 / totArea;
+			float beta = a1 / totArea;
+			float gamma = a2 / totArea;
+
+			if (alpha < 0) {
+				alpha = -alpha;
+			}
+			if (beta < 0) {
+				beta = -beta;
+			}
+			if (gamma < 0) {
+				gamma = -gamma;
+			}
+
+			Color finalColor = alpha * c0 + beta * c1 + gamma * c2;
+
+			if ((alpha + beta + gamma) <= 1) {
+				
+			}
+			SetPixel(j, i, finalColor);
+		}
+	}
+
+}
+
 /*
 Button::Button(int w, int h, const char* filename, int x, int y, int act) {
 	this->image = Image(w, h);
