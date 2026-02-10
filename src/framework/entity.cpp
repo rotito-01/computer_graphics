@@ -10,17 +10,16 @@ Entity::Entity() {
     this->model_matrix = Matrix44();
 }
 
-Entity::Entity(Mesh* m, Matrix44 mm) {
+Entity::Entity(Mesh* m, Matrix44 mm, Image text) {
 
 	this->mesh = m;
 	this->model_matrix = mm;
+    this->texture = text;
 
 }
 
 
 void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
-	
-    auto vertices = this->mesh->GetVertices();
 
 	Vector3 cur_vec1;
     Vector3 cur_vec2;
@@ -34,10 +33,10 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
     Vector3 v2;
     Vector3 v3;
 
-	for (int i = 0; i < vertices.size(); i = i+3) {
-		cur_vec1 = vertices[i];
-        cur_vec2 = vertices[i+1];
-        cur_vec3 = vertices[i+2];
+	for (int i = 0; i < mesh->GetVertices().size(); i = i + 3) {
+		cur_vec1 = mesh->GetVertices()[i];
+        cur_vec2 = mesh->GetVertices()[i+1];
+        cur_vec3 = mesh->GetVertices()[i+2];
 
 		proj_v1 = model_matrix * cur_vec1; // world coordinates
         proj_v2 = model_matrix * cur_vec2;
@@ -98,7 +97,7 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer) {
         
 		//framebuffer Set Pixel
         //framebuffer->SetPixel(v1.x, v1.y, c);
-        framebuffer->DrawTriangleInterpolated(v1, v2, v3, Color::BLUE, Color::GREEN, Color::RED, zBuffer);
+        framebuffer->DrawTriangleInterpolated(v1, v2, v3, Color::BLUE, Color::GREEN, Color::RED, zBuffer, &this->texture, mesh->GetUVs()[i], mesh->GetUVs()[i+1], mesh->GetUVs()[i+2]);
 	}
 }
 

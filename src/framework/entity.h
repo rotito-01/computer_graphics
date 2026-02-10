@@ -10,9 +10,10 @@ public:
 	Matrix44 model_matrix;
 	float displacement = 0;
 	float growth = 0;
+	Image texture;
 
 	Entity();
-	Entity(Mesh* m, Matrix44 mm);
+	Entity(Mesh* m, Matrix44 mm, Image text);
 
 
 	void Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer);

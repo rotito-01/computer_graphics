@@ -521,6 +521,87 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 
 }
 
+
+void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbuffer, Image* texture, const Vector2& uv0, const Vector2& uv1, const Vector2& uv2) {
+	Vector2 v0 = Vector2(p0.x, p0.y);
+	Vector2 v1 = Vector2(p1.x, p1.y);
+	Vector2 v2 = Vector2(p2.x, p2.y);
+	
+	Vector2 p01 = (v1 - v0);
+	Vector2 p02 = (v2 - v0);
+	Vector2 p12 = (v2 - v1);
+
+	float total = p01.Perpdot(p02);
+	float totArea = (total) / 2;
+
+	std::vector<Cell>table;
+	table.resize(this->height);
+
+	ScanLineDDA(int(p0.x), int(p0.y), int(p1.x), int(p1.y), table);
+	ScanLineDDA(int(p1.x), int(p1.y), int(p2.x), int(p2.y), table);
+	ScanLineDDA(int(p0.x), int(p0.y), int(p2.x), int(p2.y), table);
+
+	// and now go through the table so we paint 
+	for (int i = 0; i < this->height; i++) {
+		for (int j = table[i].minx; j <= table[i].maxx; j++) {
+			Vector2 p = Vector2(j, i);
+
+			float mod0 = p12.Perpdot(p - v1);
+			float a0 = (mod0) / 2;
+
+			float mod1 = p02.Perpdot(p - v0);
+			float a1 = (mod1) / 2;
+
+			float mod2 = p01.Perpdot(p - v0);
+			float a2 = (mod2) / 2;
+
+			float alpha = a0 / totArea;
+			float beta = a1 / totArea;
+			float gamma = a2 / totArea;
+
+			if (alpha < 0) {
+				alpha = -alpha;
+			}
+			if (beta < 0) {
+				beta = -beta;
+			}
+			if (gamma < 0) {
+				gamma = -gamma;
+			}
+
+			float sum = alpha + beta + gamma;
+			alpha /= sum;
+			beta /= sum;
+			gamma /= sum;
+
+			//make shure the values are from [0,1]
+			alpha = clamp(alpha, 0.0, 1.0);
+			beta = clamp(beta, 0.0, 1.0);
+			gamma = clamp(gamma, 0.0, 1.0);
+
+			Vector2 uv;
+			uv.x = alpha * uv0.x + beta * uv1.x + gamma * uv2.x;
+			uv.y = alpha * uv0.y + beta * uv1.y + gamma * uv2.y;
+
+			float z = alpha * p0.z + beta * p1.z + gamma * p2.z;
+			// Change to texture space
+			uv.x = uv.x * (texture->width - 1);
+			uv.y = uv.y * (texture->height - 1);
+
+			Color finalColor = texture->GetPixel(uv.x, uv.y);
+
+			if ((zbuffer->GetPixel(j, i) > z) || (zbuffer->GetPixel(j, i) == NULL)) {
+				zbuffer->SetPixel(j, i, z);
+				SetPixel(j, i, finalColor);
+			}
+
+			if (uv.x >= 0 && uv.x <= 1 && uv.y >= 0 && uv.y <= 1) {
+				
+			}
+		}
+	}
+}
+
 /*
 Button::Button(int w, int h, const char* filename, int x, int y, int act) {
 	this->image = Image(w, h);

@@ -37,25 +37,31 @@ void Application::Init(void)
     mesh1->LoadOBJ("../res/meshes/lee.obj");
     Matrix44 matrix = Matrix44();
     matrix.MakeTranslationMatrix(0, -0.3, 0);
-    Entity temp1 = Entity(mesh1, matrix);
+    Image texture1 = Image();
+    texture1.LoadTGA("../res/textures/lee_color_specular.tga", false);
+    Entity temp1 = Entity(mesh1, matrix, texture1);
     this->Jose = temp1;
     matrix.SetIdentity();
     matrix.MakeTranslationMatrix(0, -0.2, 0);
-    Entity temp = Entity(mesh1, matrix);
+    Entity temp = Entity(mesh1, matrix, texture1);
     this->Pedro = temp;
 
     Mesh* mesh2 = new Mesh();
     mesh2->LoadOBJ("../res/meshes/anna.obj");
     matrix.SetIdentity();
     matrix.MakeTranslationMatrix(0.4, -0.3, 0.3);
-    Entity temp2 = Entity(mesh2, matrix);
+    Image texture2 = Image();
+    texture2.LoadTGA("../res/textures/anna_color_specular.tga", false);
+    Entity temp2 = Entity(mesh2, matrix, texture2);
     this->Xesca = temp2;
     
     Mesh* mesh3 = new Mesh();
     mesh3->LoadOBJ("../res/meshes/cleo.obj");
     matrix.SetIdentity();
     matrix.MakeTranslationMatrix(-0.4, -0.2, -0.4);
-    Entity temp3 = Entity(mesh3, matrix);
+    Image texture3 = Image();
+    texture3.LoadTGA("../res/textures/cleo_color_specular.tga", false);
+    Entity temp3 = Entity(mesh3, matrix, texture3);
     this->Sandalio = temp3;
 
     this->cam = Camera();
