@@ -16,6 +16,6 @@ public:
 	Entity(Mesh* m, Matrix44 mm, Image text);
 
 
-	void Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer);
+	void Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, bool lab_mode, bool wire, bool occlusion, const Color& c, bool texture);
 	void Update(float seconds_elapsed, int mode);
 };

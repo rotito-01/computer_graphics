@@ -58,7 +58,11 @@ public:
     
     ParticleSystem partSys;
     */
-
+    bool lab;
+    bool occlusion;
+    bool wire;
+    bool texture;
+    
     int application_task;
     bool ismousepressedL;
     bool ismousepressedR;

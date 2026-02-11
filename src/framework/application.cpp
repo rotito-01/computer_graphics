@@ -74,6 +74,11 @@ void Application::Init(void)
     this->up = Vector3(0,1,0);
     this->cam.LookAt(eye, center, up);
     this->Zbuffer = FloatImage(this->window_width, this->window_height);
+    
+    this->lab = true;
+    this->wire = false;
+    this->occlusion = true;
+    this->texture = true;
 }
 
 // Render one frame
@@ -82,14 +87,14 @@ void Application::Render(void)
     this->Zbuffer = FloatImage(this->window_width, this->window_height);
     if (application_task == 1) {
         framebuffer.Fill(Color::BLACK);
-        this->Pedro.Render(&framebuffer, &cam, &Zbuffer);
+        this->Pedro.Render(&framebuffer, &cam, &Zbuffer, this->lab, this->wire, this->occlusion, Color::YELLOW, this->texture);
         framebuffer.Render();
     }
     else if (application_task == 2) {
         framebuffer.Fill(Color::BLACK);
-        this->Jose.Render(&framebuffer, &cam, &Zbuffer);
-        this->Xesca.Render(&framebuffer, &cam, &Zbuffer);
-        this->Sandalio.Render(&framebuffer, &cam, &Zbuffer);
+        this->Jose.Render(&framebuffer, &cam, &Zbuffer, this->lab, this->wire, this->occlusion, Color::WHITE, this->texture);
+        this->Xesca.Render(&framebuffer, &cam, &Zbuffer, this->lab, this->wire, this->occlusion, Color::RED, this->texture);
+        this->Sandalio.Render(&framebuffer, &cam, &Zbuffer, this->lab, this->wire, this->occlusion, Color::GREEN, this->texture);
         framebuffer.Render();
     }
     
@@ -154,6 +159,54 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
             break;
         case SDLK_2:
             this->application_task = 2;
+            break;
+            
+        case SDLK_w:
+            if (this->wire == false) {
+                this->wire = true;
+                this->lab = false;
+                break;
+            }
+            if (this->wire == true) {
+                //this->lab = true;
+                this->wire = false;
+                this->lab = true;
+                break;
+            }
+            
+            break;
+            
+        case SDLK_c:
+            if (this->lab == false) {
+                this->lab = true; // lab3
+                break;
+            }
+            if (this->lab == true) {
+                this->lab = false;
+                this->wire = false;
+                break;
+            }
+            break;
+        case SDLK_z:
+            if (this->occlusion == false) {
+                this->occlusion = true;
+                break;
+            }
+            if (this->occlusion == true) {
+                this->occlusion = false;
+                break;
+            }
+            break;
+            
+        case SDLK_t: //
+            if (this->texture == false) {
+                this->texture = true;
+                break;
+            }
+            if (this->texture == true) {
+                this->texture = false;
+                break;
+            }
             break;
     }
 }
