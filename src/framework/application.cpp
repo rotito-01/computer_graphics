@@ -128,11 +128,11 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
             break;
         case SDLK_PLUS:
             if (mode == 1) {
-                this->near_p = this->near_p + 0.5;
+                this->near_p = this->near_p + 0.25;
                 this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
             }
             else if (mode == 2) {
-                this->far_p = this->far_p + 0.5;
+                this->far_p = this->far_p + 0.25;
                 this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
             }
             else if (mode == 3) {
@@ -142,11 +142,11 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
             break;
         case SDLK_MINUS:
             if (mode == 1) {
-                this->near_p = this->near_p - 0.5;
+                this->near_p = this->near_p - 0.25;
                 this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
             }
             else if (mode == 2) {
-                this->far_p = this->far_p - 0.5;
+                this->far_p = this->far_p - 0.25;
                 this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
             }
             else if (mode == 3) {
@@ -161,35 +161,29 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
             this->application_task = 2;
             break;
             
-        case SDLK_w:
-            if (this->wire == false) {
-                this->wire = true;
-                this->lab = false;
-                break;
+        case SDLK_w: { // CHANGE WIRE ONLY IF WE ARE IN LAB 2
+            if (this->wire == false){
+                wire = true;
             }
-            if (this->wire == true) {
-                //this->lab = true;
-                this->wire = false;
-                this->lab = true;
-                break;
+            else {
+                wire = false;
             }
-            
-            break;
-            
-        case SDLK_c:
+        }
+        case SDLK_c: /// CHANGE THIS LAB
             if (this->lab == false) {
                 this->lab = true; // lab3
                 break;
             }
             if (this->lab == true) {
                 this->lab = false;
-                this->wire = false;
+                //his->wire = false;
                 break;
             }
             break;
         case SDLK_z:
             if (this->occlusion == false) {
                 this->occlusion = true;
+                //this->lab = true;
                 break;
             }
             if (this->occlusion == true) {
@@ -201,6 +195,7 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
         case SDLK_t: //
             if (this->texture == false) {
                 this->texture = true;
+                //this->lab = false;
                 break;
             }
             if (this->texture == true) {
@@ -248,11 +243,9 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
     if (ismousepressedL == true) {
 
         float angleX = mouse_delta.x * 0.005;
+        this->cam.Orbit(angleX, top);
         
         float angleY = mouse_delta.y * 0.005;
-
-        this->cam.Orbit(angleX, top);
-
         this->cam.Orbit(angleY, right);
 
     }

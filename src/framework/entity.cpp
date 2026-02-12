@@ -101,6 +101,8 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, boo
         //framebuffer Set Pixel
         //framebuffer->SetPixel(v1.x, v1.y, c);
         
+        
+        
         if (lab_mode == false){
             
             if (wire == true){ // WIREFRAME MODE
@@ -110,6 +112,10 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, boo
                 framebuffer->DrawTriangle(lab2_1, lab2_2, lab2_3, c, true, c);
             }
         }
+        
+        
+        
+        
         if (lab_mode == true) { // INTERPOLATED MODE - LAB3
             if (occlusion == true ) {// OCCLUSION MODE - USING ZBUFFER
                 if (texture == true){ // USING TEXTYRE
@@ -163,17 +169,17 @@ void Entity::Update(float seconds_elapsed, int mode) {
         Matrix44 scale = Matrix44();
         Matrix44 center = Matrix44();
         Matrix44 position = Matrix44();
-        float factor = seconds_elapsed * 50;
+        float factor = 0.9;
         growth++;
         
-        if (growth <= 70) {
+        if (growth <= 50) {
             scale.MakeScaleMatrix(factor, factor, factor);
         }
         else {
             scale.MakeScaleMatrix(float(1/ factor), float(1 / factor), float(1 / factor));
         }
         
-        if (growth == 140) {
+        if (growth == 100) {
             growth = 0;
         }
         center.MakeTranslationMatrix(-0.4, 0.3, -0.3);

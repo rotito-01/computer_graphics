@@ -543,7 +543,7 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
     ScanLineDDA(int(p0.x), int(p0.y), int(p2.x), int(p2.y), table);
 
     // and now go through the table so we paint
-    for (int i = 0; i <= this->height; i++) {
+    for (int i = 0; i < this->height; i++) {
         for (int j = table[i].minx; j <= table[i].maxx; j++) {
             Vector2 p = Vector2(j, i);
 
@@ -639,12 +639,17 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 			beta = clamp(beta, 0.0, 1.0);
 			gamma = clamp(gamma, 0.0, 1.0);
 
-			Vector2 uv;
+            
+            
+            float z = alpha * p0.z + beta * p1.z + gamma * p2.z;
+			
+            
+            Vector2 uv;
 			uv.x = alpha * uv0.x + beta * uv1.x + gamma * uv2.x;
 			uv.y = alpha * uv0.y + beta * uv1.y + gamma * uv2.y;
 
-			float z = alpha * p0.z + beta * p1.z + gamma * p2.z;
-			// Change to texture space
+
+            // Change to texture space
 			uv.x = uv.x * (texture->width - 1);
 			uv.y = uv.y * (texture->height - 1);
 
