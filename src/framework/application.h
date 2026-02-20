@@ -9,80 +9,27 @@
 #include "image.h"
 #include "mesh.h"
 #include "entity.h"
-
+#include "shader.h"
 
 class Application
 {
 public:
-    /*
-    int borderWidth_real; // border width
-    bool fill_shape; // it will change if we press 'F' and the next shape we paint will be draw as filled.
-    int application_task;
-    
-    bool ismousepressed; // changes if we are pressing or not the mouse left button
-    Vector2 mouse_start;
-    int tri_clicks;
-    
-    
-    
-    // Vectors that will be used hold triangle positions
-    Vector2 v1;
-    Vector2 v2;
-    Vector2 v3;
-    
-    int count;
-    
-	//Buttons:
-    Button clear;
-    Button load;
-    Button save;
-    Button erase;
-    Button pencil;
-    Button line;
-    Button rect;
-    Button trian;
-    Button black;
-    Button white;
-    Button pink;
-    Button yellow;
-    Button red;
-    Button blue;
-    Button cyan;
-    Button green;
-    
-    // Color selected from the palette
-    Color pen_color;
-    
-    // Each mode (triangle, rectangle...) has a number associated
-    int shape_mode;
-    
-    ParticleSystem partSys;
-    */
-    bool lab;
-    bool occlusion;
-    bool wire;
-    bool texture;
-    
-    int application_task;
-    bool ismousepressedL;
-    bool ismousepressedR;
-    FloatImage Zbuffer;
 
-    int mode;
-    float near_p;
-    float far_p;
-    float fov_aux;
+	Camera cam;
+	float near_p;
+	float far_p;
+	float fov_aux;
 
-    Vector3 eye;
-    Vector3 center;
-    Vector3 up;
+	Vector3 eye;
+	Vector3 center;
+	Vector3 up;
 
-    Camera cam;
-    Entity Jose;
-    Entity Xesca;
-    Entity Sandalio;
-    Entity Pedro;
-    
+    Mesh mesh;
+    Shader* shader;
+	Texture* texture;
+	int subtask;
+	int task;
+
     // Window
     
     SDL_Window* window = nullptr;
@@ -122,7 +69,6 @@ public:
 		this->window_width = width;
 		this->window_height = height;
 		this->framebuffer.Resize(width, height);
-        this->Zbuffer.Resize(width, height);
         this->cam.SetPerspective(60, float(this->window_width) / this->window_height, 0.1, 100);
 	}
 

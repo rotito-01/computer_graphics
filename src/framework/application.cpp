@@ -18,11 +18,19 @@ Application::Application(const char* caption, int width, int height)
 	this->keystate = SDL_GetKeyboardState(nullptr);
 
 	this->framebuffer.Resize(w, h);
-    this->mode = 0;
-
-    this->application_task = 2;
-    this->ismousepressedL = false;
-    this->ismousepressedR = false;
+    this->mesh.CreateQuad();
+    this->cam = Camera();
+    this->fov_aux = 60;
+    this->near_p = 0.1;
+    this->far_p = 10;
+    this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
+    this->eye = Vector3(0, 0, 1);
+    this->center = Vector3(0, 0, 0);
+    this->up = Vector3(0, 1, 0);
+    this->cam.LookAt(eye, center, up);
+    this->shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
+    this->subtask = 0;
+    this->texture = Texture::Get("images/fruits.png");
 }
 
 Application::~Application()
@@ -32,82 +40,25 @@ Application::~Application()
 
 void Application::Init(void)
 {
-	std::cout << "Initiating app..." << std::endl;
-    Mesh* mesh1 = new Mesh();
-    mesh1->LoadOBJ("../res/meshes/lee.obj");
-    Matrix44 matrix = Matrix44();
-    matrix.MakeTranslationMatrix(0, -0.3, 0);
-    Image texture1 = Image();
-    texture1.LoadTGA("../res/textures/lee_color_specular.tga", false);
-    Entity temp1 = Entity(mesh1, matrix, texture1);
-    this->Jose = temp1;
-    matrix.SetIdentity();
-    matrix.MakeTranslationMatrix(0, -0.2, 0);
-    Entity temp = Entity(mesh1, matrix, texture1);
-    this->Pedro = temp;
-
-    Mesh* mesh2 = new Mesh();
-    mesh2->LoadOBJ("../res/meshes/anna.obj");
-    matrix.SetIdentity();
-    matrix.MakeTranslationMatrix(0.4, -0.3, 0.3);
-    Image texture2 = Image();
-    texture2.LoadTGA("../res/textures/anna_color_specular.tga", false);
-    Entity temp2 = Entity(mesh2, matrix, texture2);
-    this->Xesca = temp2;
     
-    Mesh* mesh3 = new Mesh();
-    mesh3->LoadOBJ("../res/meshes/cleo.obj");
-    matrix.SetIdentity();
-    matrix.MakeTranslationMatrix(-0.4, -0.2, -0.4);
-    Image texture3 = Image();
-    texture3.LoadTGA("../res/textures/cleo_color_specular.tga", false);
-    Entity temp3 = Entity(mesh3, matrix, texture3);
-    this->Sandalio = temp3;
-
-    this->cam = Camera();
-    this->fov_aux = 60;
-    this->near_p = 0.1;
-    this->far_p = 10;
-    this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
-    this->eye = Vector3(0,0,1);
-    this->center = Vector3(0,0,0);
-    this->up = Vector3(0,1,0);
-    this->cam.LookAt(eye, center, up);
-    this->Zbuffer = FloatImage(this->window_width, this->window_height);
-    
-    this->lab = true;
-    this->wire = false;
-    this->occlusion = true;
-    this->texture = true;
 }
 
 // Render one frame
 void Application::Render(void)
 {
-    this->Zbuffer = FloatImage(this->window_width, this->window_height);
-    if (application_task == 1) {
-        framebuffer.Fill(Color::BLACK);
-        this->Pedro.Render(&framebuffer, &cam, &Zbuffer, this->lab, this->wire, this->occlusion, Color::YELLOW, this->texture);
-        framebuffer.Render();
-    }
-    else if (application_task == 2) {
-        framebuffer.Fill(Color::BLACK);
-        this->Jose.Render(&framebuffer, &cam, &Zbuffer, this->lab, this->wire, this->occlusion, Color::WHITE, this->texture);
-        this->Xesca.Render(&framebuffer, &cam, &Zbuffer, this->lab, this->wire, this->occlusion, Color::RED, this->texture);
-        this->Sandalio.Render(&framebuffer, &cam, &Zbuffer, this->lab, this->wire, this->occlusion, Color::GREEN, this->texture);
-        framebuffer.Render();
-    }
+    shader->Enable();
+    shader->SetTexture("u_texture", texture);
+    shader->SetInt("u_task", task);
+    shader->SetInt("u_subtask", subtask);
+    mesh.Render();
+    shader->Disable();
     
 }
 
 // Called after render
 void Application::Update(float seconds_elapsed)
 {
-    if (application_task == 2) {
-        this->Jose.Update(seconds_elapsed, 1);
-        this->Sandalio.Update(seconds_elapsed, 2);
-        this->Xesca.Update(seconds_elapsed, 3);
-    }
+    
     
 }
 
@@ -117,138 +68,55 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
     // KEY CODES: https://wiki.libsdlon.org/SDL2/SDL_Keycode
     switch(event.keysym.sym) {
         case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-        case SDLK_n:
-            mode = 1;
+        case SDLK_a:
+            subtask = 1;
+            break;
+        case SDLK_b:
+            subtask = 2;
+            break;
+        case SDLK_c:
+            subtask = 3;
+            break;
+        case SDLK_d:
+            subtask = 4;
+            break;
+        case SDLK_e:
+            subtask = 5;
             break;
         case SDLK_f:
-            mode = 2;
-            break;
-        case SDLK_v:
-            mode = 3;
-            break;
-        case SDLK_PLUS:
-            if (mode == 1) {
-                this->near_p = this->near_p + 0.25;
-                this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
-            }
-            else if (mode == 2) {
-                this->far_p = this->far_p + 0.25;
-                this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
-            }
-            else if (mode == 3) {
-                this->fov_aux = this->fov_aux + 5;
-                this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
-            }
-            break;
-        case SDLK_MINUS:
-            if (mode == 1) {
-                this->near_p = this->near_p - 0.25;
-                this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
-            }
-            else if (mode == 2) {
-                this->far_p = this->far_p - 0.25;
-                this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
-            }
-            else if (mode == 3) {
-                this->fov_aux = this->fov_aux - 5;
-                this->cam.SetPerspective(fov_aux, float(this->window_width) / this->window_height, near_p, far_p);
-            }
+            subtask = 6;
             break;
         case SDLK_1:
-            this->application_task = 1;
+            task = 1;
             break;
         case SDLK_2:
-            this->application_task = 2;
+            task = 2;
             break;
-            
-        case SDLK_w: { // CHANGE WIRE ONLY IF WE ARE IN LAB 2
-            if (this->wire == false){
-                wire = true;
-            }
-            else {
-                wire = false;
-            }
-        }
-        case SDLK_c: /// CHANGE THIS LAB
-            if (this->lab == false) {
-                this->lab = true; // lab3
-                break;
-            }
-            if (this->lab == true) {
-                this->lab = false;
-                //his->wire = false;
-                break;
-            }
+        case SDLK_3:
+            task = 3;
             break;
-        case SDLK_z:
-            if (this->occlusion == false) {
-                this->occlusion = true;
-                //this->lab = true;
-                break;
-            }
-            if (this->occlusion == true) {
-                this->occlusion = false;
-                break;
-            }
-            break;
-            
-        case SDLK_t: //
-            if (this->texture == false) {
-                this->texture = true;
-                //this->lab = false;
-                break;
-            }
-            if (this->texture == true) {
-                this->texture = false;
-                break;
-            }
+        case SDLK_4:
+            task = 4;
             break;
     }
 }
 void Application::OnMouseButtonDown( SDL_MouseButtonEvent event )
 {
 	if (event.button == SDL_BUTTON_LEFT) {
-        ismousepressedL = true;
+        
 	}
-    if (event.button == SDL_BUTTON_RIGHT) {
-        ismousepressedR = true;
-    }
 }
 
 void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 {
     if (event.button == SDL_BUTTON_LEFT) {
-        ismousepressedL = false;
-    }
-    if (event.button == SDL_BUTTON_RIGHT) {
-        ismousepressedR = false;
+        
     }
 }
 
 void Application::OnMouseMove(SDL_MouseButtonEvent event)
 {
-    Vector3 forward = (this->cam.eye - this->cam.center).Normalize();
-    Vector3 right = this->cam.up.Cross(forward).Normalize();
-    Vector3 top = forward.Cross(right);
-
-    if (ismousepressedR == true) {
-
-        float angleX = mouse_delta.x * 0.005;
-        this->cam.Rotate(angleX, top);
-
-        float angleY = mouse_delta.y * 0.005;
-        this->cam.Rotate(angleY, right);
-
-    }
-    if (ismousepressedL == true) {
-
-        float angleX = mouse_delta.x * 0.005;
-        this->cam.Orbit(angleX, top);
-        
-        float angleY = mouse_delta.y * 0.005;
-        this->cam.Orbit(angleY, right);
-
-    }
+    
 }
 
 void Application::OnWheel(SDL_MouseWheelEvent event)
