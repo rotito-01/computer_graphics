@@ -47,6 +47,7 @@ void Application::Init(void)
 void Application::Render(void)
 {
     shader->Enable();
+    shader->SetVector2("u_res", Vector2(this->window_width, this->window_height));
     shader->SetTexture("u_texture", texture);
     shader->SetInt("u_task", task);
     shader->SetInt("u_subtask", subtask);
@@ -85,6 +86,9 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
             break;
         case SDLK_f:
             subtask = 6;
+            break;
+        case SDLK_g:
+            subtask = 7;
             break;
         case SDLK_1:
             task = 1;
