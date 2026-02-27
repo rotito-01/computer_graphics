@@ -25,10 +25,16 @@ public:
 	Vector3 up;
 
     Mesh mesh;
+	Entity Pedro;
     Shader* shader;
 	Texture* texture;
 	int subtask;
 	int task;
+
+	bool ismousepressedL;
+	bool ismousepressedR;
+
+	int lab;
 
     // Window
     

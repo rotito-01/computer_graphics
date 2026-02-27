@@ -31,6 +31,9 @@ Application::Application(const char* caption, int width, int height)
     this->shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
     this->subtask = 0;
     this->texture = Texture::Get("images/fruits.png");
+    this->ismousepressedL = false;
+    this->ismousepressedR = false;
+    this->lab = 0;
 }
 
 Application::~Application()
@@ -40,20 +43,34 @@ Application::~Application()
 
 void Application::Init(void)
 {
-    
+    Mesh* mesh1 = new Mesh();
+    mesh1->LoadOBJ("../res/meshes/lee.obj");
+    Matrix44 matrix = Matrix44();
+    Image texture1 = Image();
+    texture1.LoadTGA("../res/textures/lee_normal.tga", false);
+    Shader* render = Shader::Get("shaders/render.vs", "shaders/render.fs");
+    Entity temp1 = Entity(mesh1, matrix, texture1, render);
+    this->Pedro = temp1;
+    glEnable(GL_DEPTH_TEST);
 }
 
 // Render one frame
 void Application::Render(void)
 {
-    shader->Enable();
-    shader->SetVector2("u_res", Vector2(this->window_width, this->window_height));
-    shader->SetTexture("u_texture", texture);
-    shader->SetInt("u_task", task);
-    shader->SetInt("u_subtask", subtask);
-    shader->SetFloat("u_time", time);
-    mesh.Render();
-    shader->Disable();
+    if (task == 4) {
+        Pedro.Render(&cam);
+    }
+    else {
+        shader->Enable();
+        shader->SetVector2("u_res", Vector2(this->window_width, this->window_height));
+        shader->SetTexture("u_texture", texture);
+        shader->SetInt("u_task", task);
+        shader->SetInt("u_subtask", subtask);
+        shader->SetFloat("u_time", time);
+        mesh.Render();
+        shader->Disable();
+    }
+    
     
 }
 
@@ -71,57 +88,113 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
     switch(event.keysym.sym) {
         case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
         case SDLK_a:
-            subtask = 1;
+            if (lab == 0){
+                subtask = 1;
+            }
             break;
         case SDLK_b:
-            subtask = 2;
+            if (lab == 0) {
+                subtask = 2;
+            }
             break;
         case SDLK_c:
-            subtask = 3;
+            if (lab == 0) {
+                subtask = 3;
+            }
             break;
         case SDLK_d:
-            subtask = 4;
+            if (lab == 0) {
+                subtask = 4;
+            }
             break;
         case SDLK_e:
-            subtask = 5;
+            if (lab == 0) {
+                subtask = 5;
+            }
             break;
         case SDLK_f:
-            subtask = 6;
-            break;
-        case SDLK_g:
-            subtask = 7;
+            if (lab == 0) {
+                subtask = 6;
+            }
             break;
         case SDLK_1:
-            task = 1;
+            if (lab == 0) {
+                task = 1;
+            }
             break;
         case SDLK_2:
-            task = 2;
+            if (lab == 0) {
+                task = 2;
+            }
             break;
         case SDLK_3:
-            task = 3;
+            if (lab == 0) {
+                task = 3;
+            }
             break;
         case SDLK_4:
-            task = 4;
+            if (lab == 0) {
+                task = 4;
+            }
             break;
+        case SDLK_l:
+            if (lab == 0) {
+                lab == 1;
+                break;
+            }
+            if (lab == 1) {
+                lab == 0;
+                break;
+            }
     }
 }
 void Application::OnMouseButtonDown( SDL_MouseButtonEvent event )
 {
-	if (event.button == SDL_BUTTON_LEFT) {
-        
-	}
+    if (event.button == SDL_BUTTON_LEFT) {
+        ismousepressedL = true;
+    }
+    if (event.button == SDL_BUTTON_RIGHT) {
+        ismousepressedR = true;
+    }
 }
 
 void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
 {
     if (event.button == SDL_BUTTON_LEFT) {
+        ismousepressedL = false;
+    }
+    if (event.button == SDL_BUTTON_RIGHT) {
+        ismousepressedR = false;
+    }if (event.button == SDL_BUTTON_LEFT) {
         
     }
 }
 
 void Application::OnMouseMove(SDL_MouseButtonEvent event)
 {
-    
+    Vector3 forward = (this->cam.eye - this->cam.center).Normalize();
+    Vector3 right = this->cam.up.Cross(forward).Normalize();
+    Vector3 top = forward.Cross(right);
+
+    if (ismousepressedR == true) {
+
+        float angleX = mouse_delta.x * 0.005;
+        this->cam.Rotate(angleX, top);
+
+        float angleY = mouse_delta.y * 0.005;
+        this->cam.Rotate(angleY, right);
+
+    }
+    if (ismousepressedL == true) {
+
+        float angleX = mouse_delta.x * 0.005;
+        this->cam.Orbit(angleX, top);
+
+        float angleY = mouse_delta.y * 0.005;
+
+        this->cam.Orbit(angleY, right);
+
+    }
 }
 
 void Application::OnWheel(SDL_MouseWheelEvent event)

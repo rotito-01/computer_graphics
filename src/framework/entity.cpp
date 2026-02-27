@@ -10,14 +10,23 @@ Entity::Entity() {
     this->model_matrix = Matrix44();
 }
 
-Entity::Entity(Mesh* m, Matrix44 mm, Image text) {
+Entity::Entity(Mesh* m, Matrix44 mm, Image text, Shader* shader) {
 
 	this->mesh = m;
 	this->model_matrix = mm;
     this->texture = text;
+    this->shader = shader;
 
 }
 
+void Entity::Render(Camera* camera) {
+    shader->Enable();
+    shader->SetMatrix44("u_model", model_matrix);
+    shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
+    shader->SetTexture("u_texture", Texture::Get("../res/textures/lee_color_specular.tga"));
+    mesh->Render();
+    shader->Disable();
+}
 
 void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, bool lab_mode, bool wire, bool occlusion, const Color& c, bool texture) {
     
