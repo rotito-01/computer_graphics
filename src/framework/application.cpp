@@ -51,6 +51,7 @@ void Application::Render(void)
     shader->SetTexture("u_texture", texture);
     shader->SetInt("u_task", task);
     shader->SetInt("u_subtask", subtask);
+    shader->SetFloat("u_time", time);
     mesh.Render();
     shader->Disable();
     
