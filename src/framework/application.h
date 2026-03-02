@@ -10,6 +10,7 @@
 #include "mesh.h"
 #include "entity.h"
 #include "shader.h"
+#include "material.h"
 
 class Application
 {
@@ -35,6 +36,8 @@ public:
 	bool ismousepressedR;
 
 	int lab;
+	
+	sUniformData data;
 
     // Window
     

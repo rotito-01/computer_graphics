@@ -10,24 +10,26 @@ Entity::Entity() {
     this->model_matrix = Matrix44();
 }
 
-Entity::Entity(Mesh* m, Matrix44 mm, Image text, Shader* shader) {
+Entity::Entity(Mesh* m, Matrix44 mm, Image text, Shader* shad, Material* mat) {
 
 	this->mesh = m;
 	this->model_matrix = mm;
     this->texture = text;
-    this->shader = shader;
+    this->shader = shad;
+    this->material = mat;
 
 }
 
-void Entity::Render(Camera* camera) {
-    shader->Enable();
-    shader->SetMatrix44("u_model", model_matrix);
-    shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
-    shader->SetTexture("u_texture", Texture::Get("../res/textures/lee_color_specular.tga"));
+// AÑADIR RENDER(CAM) PARA LAB 4
+
+void Entity::Render(sUniformData& uniformData) {
+    uniformData.modelmat = model_matrix;
+    material->Enable(uniformData);
     mesh->Render();
-    shader->Disable();
+    material->Disable();
 }
 
+/*
 void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, bool lab_mode, bool wire, bool occlusion, const Color& c, bool texture) {
     
     Vector3 cur_vec1;
@@ -61,7 +63,7 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, boo
         // clamp [-1, 1]
         
         
-        /*
+        
          proj_v2.x = proj_v2.x / proj_v2.w;
          proj_v2.y = proj_v2.y / proj_v2.w;
          proj_v2.z = proj_v2.z / proj_v2.w;
@@ -70,7 +72,7 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, boo
          proj_v3.y = proj_v3.y / proj_v3.w;
          proj_v3.z = proj_v3.z / proj_v3.w;
          
-         */
+         
         if ((proj_v1.x < -1 || proj_v1.x > 1) || (proj_v1.y < -1 || proj_v1.y > 1) || (proj_v1.z < -1 || proj_v1.z > 1) ||
             (proj_v2.x < -1 || proj_v2.x > 1) || (proj_v2.y < -1 || proj_v2.y > 1) || (proj_v2.z < -1 || proj_v2.z > 1) ||
             (proj_v3.x < -1 || proj_v3.x > 1) || (proj_v3.y < -1 || proj_v3.y > 1) || (proj_v3.z < -1 || proj_v3.z > 1)) {
@@ -143,6 +145,8 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, boo
         }
     }
 }
+*/
+
 void Entity::Update(float seconds_elapsed, int mode) {
     
     if (mode == 1) {

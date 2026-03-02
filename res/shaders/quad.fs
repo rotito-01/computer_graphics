@@ -98,7 +98,9 @@ if (u_task == 1){
         float g = texture(u_texture, v_uv).y;
         float b = texture(u_texture, v_uv + vec2(0.0, -offset)).z;
         texture_color = vec4(r,g,b,1.0);
-    }
+    } else if (u_subtask == 3){
+	texture_color = texture2D(u_texture, v_uv * abs(sin(u_time*0.8)));
+	}
     gl_FragColor = texture_color;
 }
 

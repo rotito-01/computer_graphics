@@ -1,8 +1,7 @@
 #include "material.h"
-#include "shader.h"
-#include "texture.h"
 
-Material::Material(Shader* shad, Texture* text, int shi, Vector3 a_coef, Vector3 s_coef, Vector3 d_coef) {
+
+Material::Material(Shader* shad, Texture* text, float shi, Vector3 a_coef, Vector3 s_coef, Vector3 d_coef) {
 	this->shader = shad;
 	this->texture = text;
 	this->shine = shi;
@@ -11,8 +10,12 @@ Material::Material(Shader* shad, Texture* text, int shi, Vector3 a_coef, Vector3
 	this->Kd = d_coef;
 }
 
-void Material::Enable() {
+void Material::Enable(const sUniformData& uniformData) {
 	shader->Enable();
+	shader->SetMatrix44("u_model", uniformData.modelmat);
+	shader->SetMatrix44("u_viewprojection", uniformData.viewproj);
+	shader->SetTexture("u_texture", texture);
+
 }
 
 void Material::Disable() {

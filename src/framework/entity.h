@@ -14,12 +14,11 @@ public:
 	float growth = 0;
 	Image texture;
 	Shader* shader;
+	Material* material;
 
 	Entity();
-	Entity(Mesh* m, Matrix44 mm, Image text, Shader* shader);
+	Entity(Mesh* m, Matrix44 mm, Image text, Shader* shad, Material* mat);
 
-
-	void Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, bool lab_mode, bool wire, bool occlusion, const Color& c, bool texture);
-	void Render(Camera* camera);
+	void Render(sUniformData& uniformData);
 	void Update(float seconds_elapsed, int mode);
 };

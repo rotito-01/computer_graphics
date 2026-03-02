@@ -34,6 +34,7 @@ Application::Application(const char* caption, int width, int height)
     this->ismousepressedL = false;
     this->ismousepressedR = false;
     this->lab = 0;
+    this->data.viewproj = cam.viewprojection_matrix;
 }
 
 Application::~Application()
@@ -49,7 +50,9 @@ void Application::Init(void)
     Image texture1 = Image();
     texture1.LoadTGA("../res/textures/lee_normal.tga", false);
     Shader* render = Shader::Get("shaders/render.vs", "shaders/render.fs");
-    Entity temp1 = Entity(mesh1, matrix, texture1, render);
+    Texture* t = Texture::Get("./res/textures/lee_color_specular.tga");
+    Material* m = &Material(render, t, 0.2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1));
+    Entity temp1 = Entity(mesh1, matrix, texture1, render, m);
     this->Pedro = temp1;
     glEnable(GL_DEPTH_TEST);
 }
@@ -58,7 +61,7 @@ void Application::Init(void)
 void Application::Render(void)
 {
     if (task == 4) {
-        Pedro.Render(&cam);
+        Pedro.Render(data);
     }
     else {
         shader->Enable();
