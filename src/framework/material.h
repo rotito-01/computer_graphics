@@ -1,8 +1,9 @@
 #pragma once
 #include "shader.h"
+#include "camera.h"
 
 struct sLight {
-	Vector2 position;
+	Vector3 position;
 	Vector3 color_int;
 };
 
@@ -11,6 +12,9 @@ struct sUniformData {
 	Matrix44 viewproj;
 	Vector3 ambient;
 	int nLights;
+	Vector3 cam_eye;
+	sLight light;
+	Camera* cam;
 };
 
 class Material {

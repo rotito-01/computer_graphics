@@ -26,7 +26,7 @@ public:
 	Vector3 up;
 
     Mesh mesh;
-	Entity Pedro;
+	Entity* Pedro;
     Shader* shader;
 	Texture* texture;
 	int subtask;
@@ -36,6 +36,8 @@ public:
 	bool ismousepressedR;
 
 	int lab;
+
+	bool light;
 	
 	sUniformData data;
 

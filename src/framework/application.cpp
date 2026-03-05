@@ -35,6 +35,12 @@ Application::Application(const char* caption, int width, int height)
     this->ismousepressedR = false;
     this->lab = 0;
     this->data.viewproj = cam.viewprojection_matrix;
+    this->data.cam_eye = this->eye;
+    this->data.light.color_int = Vector3(1,0,0);
+    this->data.light.position = Vector3(1, 2, 0);
+    this->data.ambient = Vector3(0.3, 0.3, 0.3);
+    this->data.cam = &this->cam;
+    this->light = false;
 }
 
 Application::~Application()
@@ -49,10 +55,10 @@ void Application::Init(void)
     Matrix44 matrix = Matrix44();
     Image texture1 = Image();
     texture1.LoadTGA("../res/textures/lee_normal.tga", false);
-    Shader* render = Shader::Get("shaders/render.vs", "shaders/render.fs");
-    Texture* t = Texture::Get("./res/textures/lee_color_specular.tga");
-    Material* m = &Material(render, t, 0.2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1));
-    Entity temp1 = Entity(mesh1, matrix, texture1, render, m);
+    Shader* render = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
+    Texture* t = Texture::Get("../res/textures/lee_color_specular.tga");
+    Material* m = new Material(render, t, 0.2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1));
+    Entity* temp1 = new Entity(mesh1, matrix, texture1, render, m);
     this->Pedro = temp1;
     glEnable(GL_DEPTH_TEST);
 }
@@ -60,10 +66,26 @@ void Application::Init(void)
 // Render one frame
 void Application::Render(void)
 {
-    if (task == 4) {
-        Pedro.Render(data);
+    if (lab == 1) {
+
+        this->data.viewproj = this->cam.viewprojection_matrix;
+        this->data.cam_eye = cam.eye;
+
+        if (light == false) {
+            Shader* gouraud = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
+            Pedro->shader = gouraud;
+            Pedro->material->shader = gouraud;
+            Pedro->Render(data);
+        }
+        else if (light == true) {
+            Shader* phong = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
+            Pedro->shader = phong;
+            Pedro->material->shader = phong;
+            Pedro->Render(data);
+        }
+        
     }
-    else {
+    else if (lab == 0) {
         shader->Enable();
         shader->SetVector2("u_res", Vector2(this->window_width, this->window_height));
         shader->SetTexture("u_texture", texture);
@@ -142,13 +164,23 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
             break;
         case SDLK_l:
             if (lab == 0) {
-                lab == 1;
+                lab = 1;
                 break;
             }
             if (lab == 1) {
-                lab == 0;
+                lab = 0;
                 break;
             }
+        case SDLK_g:
+            if (lab == 1) {
+                light = false;
+            }
+            break;
+        case SDLK_p:
+            if (lab == 1) {
+                light = true;
+            }
+            break;
     }
 }
 void Application::OnMouseButtonDown( SDL_MouseButtonEvent event )
