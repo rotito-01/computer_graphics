@@ -32,12 +32,20 @@ public:
 	int subtask;
 	int task;
 
+	Shader* render;
+	Shader* phong;
+	Shader* gouraud;
+
 	bool ismousepressedL;
 	bool ismousepressedR;
 
 	int lab;
+	int lights;
 
-	bool light;
+	bool activePhong;
+	bool textColor;
+	bool specular;
+	bool normal;
 	
 	sUniformData data;
 

@@ -40,7 +40,11 @@ Application::Application(const char* caption, int width, int height)
     this->data.light.position = Vector3(1, 2, 0);
     this->data.ambient = Vector3(0.3, 0.3, 0.3);
     this->data.cam = &this->cam;
-    this->light = false;
+    this->activePhong = false;
+    this->phong = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
+    // Cambiar a render.vs / adaptar lab 4 task 4
+    this->render = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
+    this->gouraud = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
 }
 
 Application::~Application()
@@ -55,7 +59,6 @@ void Application::Init(void)
     Matrix44 matrix = Matrix44();
     Image texture1 = Image();
     texture1.LoadTGA("../res/textures/lee_normal.tga", false);
-    Shader* render = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
     Texture* t = Texture::Get("../res/textures/lee_color_specular.tga");
     Material* m = new Material(render, t, 0.2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1));
     Entity* temp1 = new Entity(mesh1, matrix, texture1, render, m);
@@ -70,18 +73,11 @@ void Application::Render(void)
 
         this->data.viewproj = this->cam.viewprojection_matrix;
         this->data.cam_eye = cam.eye;
+  
+        Pedro->Render(data);
 
-        if (light == false) {
-            Shader* gouraud = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
-            Pedro->shader = gouraud;
-            Pedro->material->shader = gouraud;
-            Pedro->Render(data);
-        }
-        else if (light == true) {
-            Shader* phong = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
-            Pedro->shader = phong;
-            Pedro->material->shader = phong;
-            Pedro->Render(data);
+        if (activePhong == true) {
+
         }
         
     }
@@ -126,6 +122,9 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
             if (lab == 0) {
                 subtask = 3;
             }
+            else if (lab == 1 && activePhong == true) {
+                 textColor = !textColor;
+            }
             break;
         case SDLK_d:
             if (lab == 0) {
@@ -146,20 +145,62 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
             if (lab == 0) {
                 task = 1;
             }
+            else if (lab == 1 && activePhong == true) {
+                lights = 1;
+            }
             break;
         case SDLK_2:
             if (lab == 0) {
                 task = 2;
+            }
+            else if (lab == 1 && activePhong == true) {
+                lights = 2;
             }
             break;
         case SDLK_3:
             if (lab == 0) {
                 task = 3;
             }
+            else if (lab == 1 && activePhong == true) {
+                lights = 3;
+            }
             break;
         case SDLK_4:
             if (lab == 0) {
                 task = 4;
+            }
+            else if (lab == 1 && activePhong == true) {
+                lights = 4;
+            }
+            break;
+        case SDLK_5:
+            if (lab == 1 && activePhong == true) {
+                lights = 5;
+            }
+            break;
+        case SDLK_6:
+            if (lab == 1 && activePhong == true) {
+                lights = 6;
+            }
+            break;
+        case SDLK_7:
+            if (lab == 1 && activePhong == true) {
+                lights = 7;
+            }
+            break;
+        case SDLK_8:
+            if (lab == 1 && activePhong == true) {
+                lights = 8;
+            }
+            break;
+        case SDLK_9:
+            if (lab == 1 && activePhong == true) {
+                lights = 9;
+            }
+            break;
+        case SDLK_0:
+            if (lab == 1 && activePhong == true) {
+                lights = 0;
             }
             break;
         case SDLK_l:
@@ -173,12 +214,26 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
             }
         case SDLK_g:
             if (lab == 1) {
-                light = false;
+                Pedro->shader = gouraud;
+                Pedro->material->shader = gouraud;
+                activePhong = false;
             }
             break;
         case SDLK_p:
             if (lab == 1) {
-                light = true;
+                Pedro->shader = phong;
+                Pedro->material->shader = phong;
+                activePhong = true;
+            }
+            break;
+        case SDLK_s:
+            if (lab == 1 && activePhong == true) {
+                specular = !specular;
+            }
+            break;
+        case SDLK_n:
+            if (lab == 1 && activePhong == true) {
+                normal = !normal;
             }
             break;
     }
