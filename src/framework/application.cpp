@@ -118,12 +118,14 @@ void Application::Render(void)
             this->data.light = light_array[i];
 
             if (i == 0) { //only one light
+                this->data.ambient = Vector3(0.3, 0.3, 0.3);
                 glDisable(GL_BLEND); // no need to blend
                 Pedro->Render(data);
             }
             else { // we have more than 1 light
+                this->data.ambient = Vector3(0, 0, 0);
                 glEnable(GL_BLEND); //activate accumulative frame processing
-                glBlendFunc(GL_ZERO, GL_ONE); // factor of (1,1,1,1) for both destination and source
+                glBlendFunc(GL_ONE, GL_ONE); // factor of (1,1,1,1) for both destination and source
                 // the pixel values are in the same depth as before. to ensure that we update the colors of the pixels
                 // we say that even if they are at the same depth, we can update the values
                 glDepthFunc(GL_LEQUAL);
