@@ -76,10 +76,9 @@ Application::Application(const char* caption, int width, int height)
     this->data.ambient = Vector3(0.3, 0.3, 0.3);
     this->data.cam = &this->cam;
     this->activePhong = false;
-    this->phong = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
-    // Cambiar a render.vs / adaptar lab 4 task 4
-    this->render = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
+    this->render = Shader::Get("shaders/render.vs", "shaders/render.fs");
     this->gouraud = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
+    this->phong = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
 }
 
 Application::~Application()
@@ -92,13 +91,18 @@ void Application::Init(void)
     Mesh* mesh1 = new Mesh();
     mesh1->LoadOBJ("../res/meshes/lee.obj");
     Matrix44 matrix = Matrix44();
-    Image texture1 = Image();
-    texture1.LoadTGA("../res/textures/lee_normal.tga", false);
-    Texture* t = Texture::Get("../res/textures/lee_color_specular.tga");
-    Material* m = new Material(render, t, 0.2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1));
-    m->normalTexture = Texture::Get("../res/textures/lee_normal.tga");
-    Entity* temp1 = new Entity(mesh1, matrix, texture1, render, m);
-    this->Pedro = temp1;
+    Texture* t1 = Texture::Get("../res/textures/lee_color_specular.tga");
+    Material* m1 = new Material(render, t1, 0.2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1));
+    m1->normalTexture = Texture::Get("../res/textures/lee_normal.tga");
+    Entity* temp1 = new Entity(mesh1, matrix, render, m1);
+    this->Manuel = temp1;
+    Mesh* mesh2 = new Mesh();
+    mesh2->LoadOBJ("../res/meshes/lee.obj");
+    Texture* t2 = Texture::Get("../res/textures/lee_color_specular.tga");
+    Material* m2 = new Material(gouraud, t2, 0.2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1));
+    m2->normalTexture = Texture::Get("../res/textures/lee_normal.tga");
+    Entity* temp2 = new Entity(mesh2, matrix, gouraud, m2);
+    this->Pedro = temp2;
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -138,14 +142,18 @@ void Application::Render(void)
         
     }
     else if (lab == 0) {
-        shader->Enable();
-        shader->SetVector2("u_res", Vector2(this->window_width, this->window_height));
-        shader->SetTexture("u_texture", texture);
-        shader->SetInt("u_task", task);
-        shader->SetInt("u_subtask", subtask);
-        shader->SetFloat("u_time", time);
-        mesh.Render();
-        shader->Disable();
+        if (task == 4) {
+            Manuel->Render(&cam);
+        } else {
+            shader->Enable();
+            shader->SetVector2("u_res", Vector2(this->window_width, this->window_height));
+            shader->SetTexture("u_texture", texture);
+            shader->SetInt("u_task", task);
+            shader->SetInt("u_subtask", subtask);
+            shader->SetFloat("u_time", time);
+            mesh.Render();
+            shader->Disable();
+        }
     }
     
     

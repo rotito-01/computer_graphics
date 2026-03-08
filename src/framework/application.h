@@ -27,6 +27,7 @@ public:
 
     Mesh mesh;
 	Entity* Pedro;
+	Entity* Manuel;
     Shader* shader;
 	Texture* texture;
 	int subtask;

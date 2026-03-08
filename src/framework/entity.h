@@ -12,13 +12,13 @@ public:
 	Matrix44 model_matrix;
 	float displacement = 0;
 	float growth = 0;
-	Image texture;
 	Shader* shader;
 	Material* material;
 
 	Entity();
-	Entity(Mesh* m, Matrix44 mm, Image text, Shader* shad, Material* mat);
+	Entity(Mesh* m, Matrix44 mm, Shader* shad, Material* mat);
 
-	void Render(sUniformData& uniformData);
+	void Render(Camera* camera); // Lab 4
+	void Render(sUniformData& uniformData); // Lab 5 lighting
 	void Update(float seconds_elapsed, int mode);
 };

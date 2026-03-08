@@ -10,17 +10,23 @@ Entity::Entity() {
     this->model_matrix = Matrix44();
 }
 
-Entity::Entity(Mesh* m, Matrix44 mm, Image text, Shader* shad, Material* mat) {
+Entity::Entity(Mesh* m, Matrix44 mm, Shader* shad, Material* mat) {
 
 	this->mesh = m;
 	this->model_matrix = mm;
-    this->texture = text;
     this->shader = shad;
     this->material = mat;
 
 }
 
-// AÑADIR RENDER(CAM) PARA LAB 4
+void Entity::Render(Camera* camera) {
+    shader->Enable();
+    shader->SetMatrix44("u_model", model_matrix);
+    shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
+    shader->SetTexture("u_texture", material->texture);
+    mesh->Render();
+    shader->Disable();
+}
 
 void Entity::Render(sUniformData& uniformData) {
     uniformData.modelmat = model_matrix;

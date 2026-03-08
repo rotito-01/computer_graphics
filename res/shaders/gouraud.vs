@@ -13,17 +13,12 @@ uniform vec3 u_light_col;
 uniform float u_shine;
 
 // Variables to pass to the fragment shader
-varying vec2 v_uv;
-varying vec3 v_world_position;
-varying vec3 v_world_normal;
 varying vec3 v_ip;
 
 //here create uniforms for all the data we need here
 
 void main()
 {	
-	v_uv = gl_MultiTexCoord0.xy;
-
 	// Convert local position to world space
 	vec3 world_position = (u_model * vec4( gl_Vertex.xyz, 1.0)).xyz;
 	
@@ -51,10 +46,6 @@ void main()
 	vec3 ip = amb + (u_light_col/(d*d))*(dif + spec);
 
 	v_ip = ip;
-
-	// Pass them to the fragment shader interpolated
-	v_world_position = world_position;
-	v_world_normal = world_normal;
 
 	// Project the vertex using the model view projection matrix
 	gl_Position = u_viewprojection * vec4(world_position, 1.0); //output of the vertex shader
