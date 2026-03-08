@@ -94,9 +94,9 @@ if (u_task == 1){
     } else if (u_subtask == 2){
     // Chromatic Deformation animation
         float offset = 0.008*cos(v_uv.x * 20.0 + u_time * 4.0);
-        float r = texture(u_texture, v_uv - vec2(offset, 0.0)).x;
-        float g = texture(u_texture, v_uv).y;
-        float b = texture(u_texture, v_uv + vec2(0.0, -offset)).z;
+        float r = texture2D(u_texture, v_uv - vec2(offset, 0.0)).x;
+        float g = texture2D(u_texture, v_uv).y;
+        float b = texture2D(u_texture, v_uv + vec2(0.0, -offset)).z;
         texture_color = vec4(r,g,b,1.0);
     } else if (u_subtask == 3){
 	texture_color = texture2D(u_texture, v_uv * abs(sin(u_time*0.8)));

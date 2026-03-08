@@ -1,5 +1,5 @@
-/*  
-	+ This class encapsulates the application, is in charge of creating the data, getting the user input, process the update and render.
+/*
+    + This class encapsulates the application, is in charge of creating the data, getting the user input, process the update and render.
 */
 
 #pragma once
@@ -48,6 +48,7 @@ public:
 	bool normal;
 	
 	sUniformData data;
+    sLight light_array[9];
 
     // Window
     

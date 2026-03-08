@@ -1,7 +1,7 @@
 #include "application.h"
 #include "mesh.h"
 #include "shader.h"
-#include "utils.h" 
+#include "utils.h"
 #include "entity.h"
 
 Application::Application(const char* caption, int width, int height)
@@ -34,6 +34,41 @@ Application::Application(const char* caption, int width, int height)
     this->ismousepressedL = false;
     this->ismousepressedR = false;
     this->lab = 0;
+    
+    this->task = 1;
+    this->lights = 1;
+    this->textColor = false;
+    this->specular = false;
+    this->normal = false;
+    
+    // Configrar las luces
+    this->light_array[0].position = Vector3(1, 2, 0);
+    this->light_array[0].color_int = Vector3(1, 0, 0);
+    
+    this->light_array[1].position = Vector3(-1, 2, 0);
+    this->light_array[1].color_int = Vector3(0, 0.6, 0);
+    
+    this->light_array[2].position = Vector3(0, -2, 1);
+    this->light_array[2].color_int = Vector3(0, 0.3, 0);
+    
+    this->light_array[3].position = Vector3(2, 1, 1);
+    this->light_array[3].color_int = Vector3(0.2, 0.1, 0);
+    
+    this->light_array[4].position = Vector3(-2, 1, -1);
+    this->light_array[4].color_int = Vector3(0, 0.6, 0.4);
+    
+    this->light_array[5].position = Vector3(0, 3, 2);
+    this->light_array[5].color_int = Vector3(0.3, 0, 0.2);
+    
+    this->light_array[6].position = Vector3(1, -1, 2);
+    this->light_array[6].color_int = Vector3(0.1, 0.5, 0);
+    
+    this->light_array[7].position = Vector3(-1, -1, -2);
+    this->light_array[7].color_int = Vector3(0.5, 0, 0.4);
+    
+    this->light_array[8].position = Vector3(3, 0, 0);
+    this->light_array[8].color_int = Vector3(1, 1, 1);
+    
     this->data.viewproj = cam.viewprojection_matrix;
     this->data.cam_eye = this->eye;
     this->data.light.color_int = Vector3(1,0,0);
@@ -61,6 +96,7 @@ void Application::Init(void)
     texture1.LoadTGA("../res/textures/lee_normal.tga", false);
     Texture* t = Texture::Get("../res/textures/lee_color_specular.tga");
     Material* m = new Material(render, t, 0.2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1));
+    m->normalTexture = Texture::Get("../res/textures/lee_normal.tga");
     Entity* temp1 = new Entity(mesh1, matrix, texture1, render, m);
     this->Pedro = temp1;
     glEnable(GL_DEPTH_TEST);
@@ -73,12 +109,30 @@ void Application::Render(void)
 
         this->data.viewproj = this->cam.viewprojection_matrix;
         this->data.cam_eye = cam.eye;
-  
-        Pedro->Render(data);
+        Pedro->material->useTexture = textColor;
+        Pedro->material->useSpecular = specular;
+        Pedro->material->useNormal = normal;
 
-        if (activePhong == true) {
+        //process each frame x # of lights
+        for (int i = 0; i < lights; i++) {
+            this->data.light = light_array[i];
 
+            if (i == 0) { //only one light
+                glDisable(GL_BLEND); // no need to blend
+                Pedro->Render(data);
+            }
+            else { // we have more than 1 light
+                glEnable(GL_BLEND); //activate accumulative frame processing
+                glBlendFunc(GL_ZERO, GL_ONE); // factor of (1,1,1,1) for both destination and source
+                // the pixel values are in the same depth as before. to ensure that we update the colors of the pixels
+                // we say that even if they are at the same depth, we can update the values
+                glDepthFunc(GL_LEQUAL);
+                Pedro->Render(data);
+            }
         }
+
+        glDisable(GL_BLEND);
+        glDepthFunc(GL_LESS);
         
     }
     else if (lab == 0) {
@@ -289,16 +343,16 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
 
 void Application::OnWheel(SDL_MouseWheelEvent event)
 {
-	float dy = event.preciseY;
+    float dy = event.preciseY;
     Vector3 v = Vector3(0, 0, (dy * 0.1));
     this->cam.Move(v);
     
-	// ...
+    // ...
 }
 
 void Application::OnFileChanged(const char* filename)
-{ 
-	Shader::ReloadSingleShader(filename);
+{
+    Shader::ReloadSingleShader(filename);
 }
 /*
 void Application::LoadUI() {
@@ -347,4 +401,3 @@ void Application::LoadUI() {
     
 }
 */
-
