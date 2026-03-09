@@ -92,14 +92,14 @@ void Application::Init(void)
     mesh1->LoadOBJ("../res/meshes/lee.obj");
     Matrix44 matrix = Matrix44();
     Texture* t1 = Texture::Get("../res/textures/lee_color_specular.tga");
-    Material* m1 = new Material(render, t1, 0.2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1));
+    Material* m1 = new Material(render, t1, 50, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1));
     m1->normalTexture = Texture::Get("../res/textures/lee_normal.tga");
     Entity* temp1 = new Entity(mesh1, matrix, render, m1);
     this->Manuel = temp1;
     Mesh* mesh2 = new Mesh();
     mesh2->LoadOBJ("../res/meshes/lee.obj");
     Texture* t2 = Texture::Get("../res/textures/lee_color_specular.tga");
-    Material* m2 = new Material(gouraud, t2, 0.2, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1));
+    Material* m2 = new Material(gouraud, t2, 50, Vector3(1, 1, 1), Vector3(1, 1, 1), Vector3(1, 1, 1));
     m2->normalTexture = Texture::Get("../res/textures/lee_normal.tga");
     Entity* temp2 = new Entity(mesh2, matrix, gouraud, m2);
     this->Pedro = temp2;
